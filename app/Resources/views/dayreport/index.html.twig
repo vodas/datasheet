@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Dayreports list</h1>
+    <h1>Dayreports list {{ username }}</h1>
 
-    <table>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
@@ -27,23 +27,14 @@
                 <td>{% if dayReport.canEdit %}Yes{% else %}No{% endif %}</td>
                 <td>{% if dayReport.date %}{{ dayReport.date|date('Y-m-d H:i:s') }}{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('dayreport_show', { 'id': dayReport.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <a class="btn btn-primary" href="{{ path('dayreport_show', { 'id': dayReport.id }) }}">show</a>
+                    <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">edit</a>
+
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <a class="btn btn-success" href="{{ path('dayreport_new') }}">Create a new dayReport</a>
 
-    <ul>
-        <li>
-            <a href="{{ path('dayreport_new') }}">Create a new dayReport</a>
-        </li>
-    </ul>
 {% endblock %}

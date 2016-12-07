@@ -5,6 +5,7 @@ namespace TimesheetBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class DayReportType extends AbstractType
 {
@@ -13,7 +14,11 @@ class DayReportType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('start')->add('end')->add('userId')->add('comment')->add('canEdit')->add('date')        ;
+        $builder->add('start')->add('end')->add('comment')
+
+            ->add('date', DateType::class, array(
+                'widget' => 'choice',
+            ));
     }
     
     /**

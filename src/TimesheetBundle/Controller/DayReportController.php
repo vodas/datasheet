@@ -27,18 +27,32 @@ class DayReportController extends Controller
         ));
     }
 
+    public function employeeAction($userid) {
+        $em = $this->getDoctrine()->getManager();
+
+        $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $userid));
+
+        return $this->render('dayreport/index.html.twig', array(
+            'dayReports' => $dayReports,
+            'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid))->getUsername()
+        ));
+    }
+
     /**
      * Creates a new dayReport entity.
      *
      */
     public function newAction(Request $request)
     {
-        $dayReport = new Dayreport();
+        $dayReport = new DayReport();
         $form = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReport);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            $userId = $user->getId();
             $em = $this->getDoctrine()->getManager();
+            $dayReport->setUserId($userId);
+            $dayReport->setCanEdit(1);
             $em->persist($dayReport);
             $em->flush($dayReport);
 

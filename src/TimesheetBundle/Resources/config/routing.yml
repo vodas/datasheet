@@ -1,6 +1,3 @@
-timesheet_dayreport:
-    resource: "@TimesheetBundle/Resources/config/routing/dayreport.yml"
-    prefix:   /dayreport
 
 projects_index:
     path:     /projects/
@@ -25,5 +22,35 @@ projects_edit:
 projects_delete:
     path:     /projects/{id}/delete
     defaults: { _controller: "TimesheetBundle:Projects:delete" }
+    methods:  DELETE
+
+dayreport_index:
+    path:     /dayreport/
+    defaults: { _controller: "TimesheetBundle:DayReport:index" }
+    methods:  GET
+
+dayreport_show:
+    path:     /dayreport/{id}/show
+    defaults: { _controller: "TimesheetBundle:DayReport:show" }
+    methods:  GET
+
+dayreport_employee:
+    path:     /employee/{userid}
+    defaults: { _controller: "TimesheetBundle:DayReport:employee" }
+    methods:  GET
+
+dayreport_new:
+    path:     /dayreport/new
+    defaults: { _controller: "TimesheetBundle:DayReport:new" }
+    methods:  [GET, POST]
+
+dayreport_edit:
+    path:     /dayreport/{id}/edit
+    defaults: { _controller: "TimesheetBundle:DayReport:edit" }
+    methods:  [GET, POST]
+
+dayreport_delete:
+    path:     /dayreport/{id}/delete
+    defaults: { _controller: "TimesheetBundle:DayReport:delete" }
     methods:  DELETE
 

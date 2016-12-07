@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Projects list</h1>
-    <table>
+    <h1>Projekty</h1>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
@@ -18,23 +18,14 @@
                 <td>{{ project.name }}</td>
                 <td>{{ project.client }}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('projects_show', { 'id': project.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('projects_edit', { 'id': project.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                            <a class="btn btn-primary" href="{{ path('projects_show', { 'id': project.id }) }}">show</a>
+                            <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edit</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    <a class="btn btn-success" href="{{ path('projects_new') }}">Create a new project</a>
 
-    <ul>
-        <li>
-            <a href="{{ path('projects_new') }}">Create a new project</a>
-        </li>
-    </ul>
+
 {% endblock %}

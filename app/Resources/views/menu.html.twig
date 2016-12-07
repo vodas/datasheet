@@ -10,17 +10,17 @@
             {% endif %}
 
             {% if is_granted('ROLE_ADMIN') %}
-                <li class="active"><a href="register">Stwórz nowego użytkownika</a></li>
+                <li><a href="{{ app.request.getBaseURL() }}/register">Stwórz nowego użytkownika</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pracownik<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                             {% for user in users %}
-                                <li><a href="{{ path('employee_employee', {'userid': user.id}) }}">{{ user.username }}</a></li>
+                                <li><a href="{{ path('dayreport_employee', {'userid': user.id}) }}">{{ user.username }}</a></li>
                                 <li role="separator" class="divider"></li>
                             {% endfor %}
                     </ul>
                 </li>
-                <li><a href="{{ path('employee_index') }}">Pracownicy</a></li>
+                <li><a href="{{ path('dayreport_index') }}">Raporty</a></li>
                 <li><a href="{{ path('projects_index') }}">Projekty</a></li>
             {% endif %}
             {% if  app.user %}
