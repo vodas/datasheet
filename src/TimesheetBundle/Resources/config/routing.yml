@@ -1,0 +1,29 @@
+timesheet_dayreport:
+    resource: "@TimesheetBundle/Resources/config/routing/dayreport.yml"
+    prefix:   /dayreport
+
+projects_index:
+    path:     /projects/
+    defaults: { _controller: "TimesheetBundle:Projects:index" }
+    methods:  GET
+
+projects_show:
+    path:     /projects/{id}/show
+    defaults: { _controller: "TimesheetBundle:Projects:show" }
+    methods:  GET
+
+projects_new:
+    path:     /projects/new
+    defaults: { _controller: "TimesheetBundle:Projects:new" }
+    methods:  [GET, POST]
+
+projects_edit:
+    path:     /projects/{id}/edit
+    defaults: { _controller: "TimesheetBundle:Projects:edit" }
+    methods:  [GET, POST]
+
+projects_delete:
+    path:     /projects/{id}/delete
+    defaults: { _controller: "TimesheetBundle:Projects:delete" }
+    methods:  DELETE
+

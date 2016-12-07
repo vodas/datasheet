@@ -21,6 +21,7 @@
                     </ul>
                 </li>
                 <li><a href="{{ path('employee_index') }}">Pracownicy</a></li>
+                <li><a href="{{ path('projects_index') }}">Projekty</a></li>
             {% endif %}
             {% if  app.user %}
                 <p class="navbar-text navbar-right"><a href="{{ app.request.getBaseURL() }}/logout">Logout</a></p>

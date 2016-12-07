@@ -1,0 +1,24 @@
+dayreport_index:
+    path:     /
+    defaults: { _controller: "TimesheetBundle:DayReport:index" }
+    methods:  GET
+
+dayreport_show:
+    path:     /{id}/show
+    defaults: { _controller: "TimesheetBundle:DayReport:show" }
+    methods:  GET
+
+dayreport_new:
+    path:     /new
+    defaults: { _controller: "TimesheetBundle:DayReport:new" }
+    methods:  [GET, POST]
+
+dayreport_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "TimesheetBundle:DayReport:edit" }
+    methods:  [GET, POST]
+
+dayreport_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "TimesheetBundle:DayReport:delete" }
+    methods:  DELETE

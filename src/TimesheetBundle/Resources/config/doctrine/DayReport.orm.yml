@@ -1,0 +1,26 @@
+TimesheetBundle\Entity\DayReport:
+    type: entity
+    table: null
+    repositoryClass: TimesheetBundle\Repository\DayReportRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        start:
+            type: time
+        end:
+            type: time
+        userId:
+            type: integer
+            column: user_id
+        comment:
+            type: text
+        canEdit:
+            type: boolean
+            column: can_edit
+        date:
+            type: datetime
+    lifecycleCallbacks: {  }

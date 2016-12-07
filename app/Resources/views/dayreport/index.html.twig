@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Dayreports list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Userid</th>
+                <th>Comment</th>
+                <th>Canedit</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for dayReport in dayReports %}
+            <tr>
+                <td><a href="{{ path('dayreport_show', { 'id': dayReport.id }) }}">{{ dayReport.id }}</a></td>
+                <td>{% if dayReport.start %}{{ dayReport.start|date('H:i:s') }}{% endif %}</td>
+                <td>{% if dayReport.end %}{{ dayReport.end|date('H:i:s') }}{% endif %}</td>
+                <td>{{ dayReport.userId }}</td>
+                <td>{{ dayReport.comment }}</td>
+                <td>{% if dayReport.canEdit %}Yes{% else %}No{% endif %}</td>
+                <td>{% if dayReport.date %}{{ dayReport.date|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('dayreport_show', { 'id': dayReport.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('dayreport_new') }}">Create a new dayReport</a>
+        </li>
+    </ul>
+{% endblock %}

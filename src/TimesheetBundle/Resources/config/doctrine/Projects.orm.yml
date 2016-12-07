@@ -1,0 +1,19 @@
+TimesheetBundle\Entity\Projects:
+    type: entity
+    table: null
+    repositoryClass: TimesheetBundle\Repository\ProjectsRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        client:
+            type: string
+            length: 255
+            nullable: true
+    lifecycleCallbacks: {  }

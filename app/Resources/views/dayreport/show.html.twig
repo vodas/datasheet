@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Dayreport</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ dayReport.id }}</td>
+            </tr>
+            <tr>
+                <th>Start</th>
+                <td>{% if dayReport.start %}{{ dayReport.start|date('H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>End</th>
+                <td>{% if dayReport.end %}{{ dayReport.end|date('H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Userid</th>
+                <td>{{ dayReport.userId }}</td>
+            </tr>
+            <tr>
+                <th>Comment</th>
+                <td>{{ dayReport.comment }}</td>
+            </tr>
+            <tr>
+                <th>Canedit</th>
+                <td>{% if dayReport.canEdit %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{% if dayReport.date %}{{ dayReport.date|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('dayreport_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
