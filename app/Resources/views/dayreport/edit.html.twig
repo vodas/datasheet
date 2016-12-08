@@ -10,12 +10,18 @@
 
     <ul>
         <li>
-            <a href="{{ path('dayreport_index') }}">Back to the list</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('dayreport_index') }}">Back to the list</a>
+            {% else %}
+                <a href="{{ path('dayreport_mysheet') }}">Back to the list</a>
+            {% endif %}
         </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+            <li>
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        {% endif %}
     </ul>
 {% endblock %}

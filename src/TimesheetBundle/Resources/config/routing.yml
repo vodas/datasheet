@@ -39,8 +39,18 @@ dayreport_employee:
     defaults: { _controller: "TimesheetBundle:DayReport:employee" }
     methods:  GET
 
+dayreport_mysheet:
+    path:     /mysheet/
+    defaults: { _controller: "TimesheetBundle:DayReport:mysheet" }
+    methods:  GET
+
 dayreport_new:
     path:     /dayreport/new
+    defaults: { _controller: "TimesheetBundle:DayReport:new" }
+    methods:  [GET, POST]
+
+dayreport_new_date:
+    path:     /dayreport/new/{date}/
     defaults: { _controller: "TimesheetBundle:DayReport:new" }
     methods:  [GET, POST]
 
@@ -53,4 +63,6 @@ dayreport_delete:
     path:     /dayreport/{id}/delete
     defaults: { _controller: "TimesheetBundle:DayReport:delete" }
     methods:  DELETE
+
+
 

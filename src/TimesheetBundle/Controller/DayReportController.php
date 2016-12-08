@@ -5,6 +5,9 @@ namespace TimesheetBundle\Controller;
 use TimesheetBundle\Entity\DayReport;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use \DateTime;
+use \DateInterval;
+use TimesheetBundle\Entity\DayReportForm;
 
 /**
  * Dayreport controller.
@@ -12,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class DayReportController extends Controller
 {
+    const STARTDATE = '2016-01-01';
     /**
      * Lists all dayReport entities.
      *
@@ -38,24 +42,101 @@ class DayReportController extends Controller
         ));
     }
 
+    public function mysheetAction() {
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        $startDate = new DateTime(self::STARTDATE);
+        $endDate = clone $startDate;
+        $endDate->add(new DateInterval("P1Y"));
+        while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
+            $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
+            $startDate->add(new DateInterval("P1D"));
+        }
+
+        $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $user->getId()));
+        foreach ($dayReports as $dayReport) {
+            $date = $dayReport->getDate()->format('Y-m-d');
+            $month = $dayReport->getDate()->format('F');
+            $Dates[$month][$date]['start'] = $dayReport->getStart();
+            $Dates[$month][$date]['end'] = $dayReport->getEnd();
+            $Dates[$month][$date]['comment'] = $dayReport->getComment();
+            $Dates[$month][$date]['id'] = $dayReport->getId();
+            $time = new DateTime();
+            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp());
+            $Dates[$month][$date]['time'] = $time->format('H:i');
+
+        }
+        $currentMonth = date('F');
+        return $this->render('dayreport/mysheet.html.twig', array(
+            'dates' => $Dates,
+            'currentMonth' => $currentMonth
+        ));
+    }
+
     /**
      * Creates a new dayReport entity.
      *
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, $date)
     {
         $dayReport = new DayReport();
+        $dayReport->setDate(new DateTime($date));
         $form = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReport);
         $form->handleRequest($request);
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $userId = $user->getId();
+        $dayReports = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:DayReport')->findBy(
+            array('userId' => $userId, 'date' => $dayReport->getDate()));
+
+        if($dayReports!=null) {
+            return $this->render('dayreport/new.html.twig', array(
+                'dayReport' => $dayReport,
+                'form' => $form->createView(),
+                'error' => 1
+            ));
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->get('security.token_storage')->getToken()->getUser();
-            $userId = $user->getId();
-            $em = $this->getDoctrine()->getManager();
+            if (($dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp()) == 0 ) {
+                return $this->render('dayreport/new.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'form' => $form->createView(),
+                    'error' => 2
+                ));
+            }
+            
+            if ($dayReport->getDate()->format('D') == 'Sat' or $dayReport->getDate()->format('D') == 'Sun') {
+                return $this->render('dayreport/new.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'form' => $form->createView(),
+                    'error' => 3
+                ));
+            }
+
+            #dodanie listy swiat ruchomych
+            #wialkanoc
+            $startDate = new DateTime(self::STARTDATE);
+            $easter = date('m-d', easter_date($startDate->format('Y')));
+            #poniedzialek wielkanocny
+            $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
+            #boze cialo
+            $bozeCialo = date('m-d', strtotime('+60 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+            #Zesłanie Ducha Świętego
+            $zeslanie = date('m-d', strtotime('+49 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+           if(in_array($dayReport->getDate()->format('m-d'),array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie))) {
+               return $this->render('dayreport/new.html.twig', array(
+                   'dayReport' => $dayReport,
+                   'form' => $form->createView(),
+                   'error' => 4
+               ));
+           }
+
             $dayReport->setUserId($userId);
             $dayReport->setCanEdit(1);
+            $em = $this->getDoctrine()->getManager();
             $em->persist($dayReport);
             $em->flush($dayReport);
-
             return $this->redirectToRoute('dayreport_show', array('id' => $dayReport->getId()));
         }
 

@@ -2,15 +2,30 @@
 
 {% block body %}
     <h1>Dayreport creation</h1>
-
+    {% if error is defined %}
+        <div class="alert alert-danger">
+       {% if error == 1 %}
+           <strong>Raport instnieje dla wybranej daty.</strong>
+       {% elseif error == 2 %}
+           <strong>Niepoprawny czas pracy.</strong>
+       {% elseif error == 3 %}
+           <strong>Wybrano sobotę lub niedzielę.</strong>
+       {% elseif error == 4 %}
+           <strong>Wybrano dzień wolny.</strong>
+       {% endif %}
+        </div>
+    {% endif %}
     {{ form_start(form) }}
         {{ form_widget(form) }}
         <input type="submit" value="Create" />
     {{ form_end(form) }}
 
     <ul>
-        <li>
-            <a href="{{ path('dayreport_index') }}">Back to the list</a>
+        <li>{% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('dayreport_index') }}">Back to the list</a>
+            {% else %}
+                <a href="{{ path('dayreport_mysheet') }}">Back to the list</a>
+            {% endif %}
         </li>
     </ul>
 {% endblock %}

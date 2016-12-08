@@ -6,6 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class DayReportType extends AbstractType
 {
@@ -14,11 +17,21 @@ class DayReportType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('start')->add('end')->add('comment')
+        $builder->add('start', TimeType::class, array(
+            'widget' => 'choice'
+        ))
+            ->add('end', TimeType::class, array(
+                'widget' => 'choice'
+            ))
+            ->add('comment', TextareaType::class, array(
+                'attr' => array('class' => 'tinymce'),
+            ))
+            
 
             ->add('date', DateType::class, array(
-                'widget' => 'choice',
+                'widget' => 'choice'
             ));
+
     }
     
     /**
