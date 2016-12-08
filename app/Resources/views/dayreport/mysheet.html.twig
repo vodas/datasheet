@@ -30,7 +30,12 @@
                     </thead>
                     <tbody>
                     {% for day,values in month %}
-                        <tr {% if values.day == 'Sat' or values.day == 'Sun' %}style="background-color: #9d9d9d"{% endif %}>
+                        <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
+                            style="background-color: #9d9d9d"
+                        {% elseif values.free is defined %}
+                            style="background-color: #9d9d9d"
+                        {% endif %}
+                        >
                             <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
                             {% if values.start is defined %}
                             <td>{% if values.start is defined %}{{ values.start|date('H:i') }}{% endif %}</td>
@@ -43,8 +48,10 @@
                                     <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': values.id }) }}">edit</a>
                                 {% endif %}
                             </td>
-                            {% elseif values.day != 'Sat' and values.day != 'Sun'%}
+                            {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
                                 <td colspan="5"><a class="btn btn-danger" href="{{ path('dayreport_new_date',{'date' : day}) }}">Uzupełnij</a></td>
+                            {% elseif values.free is defined %}
+                                <td colspan="5">Święto</td>
                             {% elseif values.day == 'Sat' or values.day == 'Sun'%}
                                 <td colspan="5"></td>
                             {% endif %}

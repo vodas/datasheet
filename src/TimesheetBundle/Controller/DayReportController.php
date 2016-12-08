@@ -20,6 +20,24 @@ class DayReportController extends Controller
      * Lists all dayReport entities.
      *
      */
+    public $freeDays;
+
+    function __construct() {
+        if($this->freeDays === null) {
+            #dodanie listy swiat ruchomych
+            #wialkanoc
+            $startDate = new DateTime(self::STARTDATE);
+            $easter = date('m-d', easter_date($startDate->format('Y')));
+            #poniedzialek wielkanocny
+            $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
+            #boze cialo
+            $bozeCialo = date('m-d', strtotime('+60 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+            #Zesłanie Ducha Świętego
+            $zeslanie = date('m-d', strtotime('+49 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+            $this->freeDays = array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie);
+        }
+    }
+
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
@@ -43,7 +61,6 @@ class DayReportController extends Controller
     }
 
     public function mysheetAction() {
-
         $em = $this->getDoctrine()->getManager();
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         $startDate = new DateTime(self::STARTDATE);
@@ -51,6 +68,9 @@ class DayReportController extends Controller
         $endDate->add(new DateInterval("P1Y"));
         while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
             $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
+            if(in_array($startDate->format('m-d'),$this->freeDays)) {
+                $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['free'] = 1;
+            }
             $startDate->add(new DateInterval("P1D"));
         }
 
@@ -67,6 +87,7 @@ class DayReportController extends Controller
             $Dates[$month][$date]['time'] = $time->format('H:i');
 
         }
+        dump($Dates);
         $currentMonth = date('F');
         return $this->render('dayreport/mysheet.html.twig', array(
             'dates' => $Dates,
@@ -114,17 +135,7 @@ class DayReportController extends Controller
                 ));
             }
 
-            #dodanie listy swiat ruchomych
-            #wialkanoc
-            $startDate = new DateTime(self::STARTDATE);
-            $easter = date('m-d', easter_date($startDate->format('Y')));
-            #poniedzialek wielkanocny
-            $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
-            #boze cialo
-            $bozeCialo = date('m-d', strtotime('+60 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
-            #Zesłanie Ducha Świętego
-            $zeslanie = date('m-d', strtotime('+49 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
-           if(in_array($dayReport->getDate()->format('m-d'),array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie))) {
+           if(in_array($dayReport->getDate()->format('m-d'),$this->freeDays)) {
                return $this->render('dayreport/new.html.twig', array(
                    'dayReport' => $dayReport,
                    'form' => $form->createView(),
