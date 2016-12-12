@@ -41,7 +41,9 @@
                             <td>
                                 {% if values.id is defined %}
                                     <a class="btn btn-primary" href="{{ path('dayreport_show', { 'id': values.id }) }}">szczegóły</a>
-                                    <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': values.id }) }}">edytuj</a>
+                                    {% if values.can_edit ==1 %}
+                                        <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': values.id }) }}">edytuj</a>
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}

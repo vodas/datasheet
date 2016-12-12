@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use TimesheetBundle\Entity\DayReportForm;
 
 class DayReportType extends AbstractType
 {
@@ -29,8 +30,17 @@ class DayReportType extends AbstractType
             
 
             ->add('date', DateType::class, array(
-                'widget' => 'choice'
-            ));
+                'widget' => 'choice',
+            ))
+
+
+            ->add('projectId', ChoiceType::class, array(
+                'choices' => $options['projects'],
+            ))
+
+        ->add('timeSpent', TimeType::class, array(
+        'widget' => 'choice'
+        ));
 
     }
     
@@ -40,7 +50,8 @@ class DayReportType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'TimesheetBundle\Entity\DayReport'
+            'data_class' => DayReportForm::class,
+            'projects' => array(),
         ));
     }
 
@@ -51,6 +62,7 @@ class DayReportType extends AbstractType
     {
         return 'timesheetbundle_dayreport';
     }
+
 
 
 }

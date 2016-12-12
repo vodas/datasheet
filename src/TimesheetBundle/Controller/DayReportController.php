@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use \DateTime;
 use \DateInterval;
 use TimesheetBundle\Entity\DayReportForm;
+use TimesheetBundle\Entity\ProjectReport;
 
 /**
  * Dayreport controller.
@@ -70,6 +71,7 @@ class DayReportController extends Controller
             $Dates[$month][$date]['end'] = $dayReport->getEnd();
             $Dates[$month][$date]['comment'] = $dayReport->getComment();
             $Dates[$month][$date]['id'] = $dayReport->getId();
+            $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
             $time = new DateTime();
             date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
             $Dates[$month][$date]['time'] = $time->format('H:i');
@@ -79,6 +81,7 @@ class DayReportController extends Controller
         return $this->render('dayreport/index.html.twig', array(
             'dates' => $Dates,
             'currentMonth' => $currentMonth,
+            'userid' => $userid,
             'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid))->getUsername()
         ));
     }
@@ -105,6 +108,7 @@ class DayReportController extends Controller
             $Dates[$month][$date]['end'] = $dayReport->getEnd();
             $Dates[$month][$date]['comment'] = $dayReport->getComment();
             $Dates[$month][$date]['id'] = $dayReport->getId();
+            $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
             $time = new DateTime();
             date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
             $Dates[$month][$date]['time'] = $time->format('H:i');
@@ -123,9 +127,15 @@ class DayReportController extends Controller
      */
     public function newAction(Request $request, $date)
     {
+        $dayReportForm = new DayReportForm();
         $dayReport = new DayReport();
-        $dayReport->setDate(new DateTime($date));
-        $form = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReport);
+        $dayReportForm->setDate(new DateTime($date));
+        $projects = array();
+        $projectEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findAll();
+        foreach($projectEntity as $entity) {
+            $projects[$entity->getName()] = $entity->getId();
+        }
+        $form = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReportForm, array('projects' => $projects));
         $form->handleRequest($request);
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $userId = $user->getId();
@@ -141,7 +151,14 @@ class DayReportController extends Controller
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (($dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp()) == 0 ) {
+
+            $dayReport->setStart($dayReportForm->getStart());
+            $dayReport->setEnd($dayReportForm->getEnd());
+            $dayReport->setComment($dayReportForm->getComment());
+            $dayReport->setDate($dayReportForm->getDate());
+
+
+            if (($dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp()) <= 0 ) {
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
@@ -170,6 +187,15 @@ class DayReportController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($dayReport);
             $em->flush($dayReport);
+            
+            $projectReport = new ProjectReport();
+            $projectReport->setProjectId($dayReportForm->getProjectId());
+            $projectReport->setTimeSpent($dayReportForm->getTimeSpent());
+            $projectReport->setDayReportId($dayReport->getId());
+            $em->persist($projectReport);
+            $em->flush($projectReport);
+            
+            
             return $this->redirectToRoute('dayreport_show', array('id' => $dayReport->getId()));
         }
 
@@ -209,13 +235,24 @@ class DayReportController extends Controller
      * Displays a form to edit an existing dayReport entity.
      *
      */
-    public function editAction(Request $request, DayReport $dayReport)
+    public function editAction(Request $request, DayReportForm $dayReport)
     {
         $deleteForm = $this->createDeleteForm($dayReport);
         $editForm = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReport);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+
+            if (($dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp()) <= 0 ) {
+                return $this->render('dayreport/edit.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'edit_form' => $editForm->createView(),
+                    'delete_form' => $deleteForm->createView(),
+                    'error' => 2
+                ));
+            }
+            
+            
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('dayreport_edit', array('id' => $dayReport->getId()));
@@ -260,5 +297,22 @@ class DayReportController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    public function massAction(Request $request) {
+        $canEdit = $request->request->get('can_edit');
+        $userId = $request->request->get('employee_id');
+        $em = $this->getDoctrine()->getManager();
+        $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $userId));
+        foreach ($dayReports as $dayReport) {
+            if(array_key_exists($dayReport->getId(), $canEdit)) {
+                $dayReport->setCanEdit($canEdit[$dayReport->getId()]);
+                $em->persist($dayReport);
+                $em->flush($dayReport);
+
+            }
+        }
+        return $this->redirectToRoute('dayreport_employee', array('userid' => $userId));
+
     }
 }

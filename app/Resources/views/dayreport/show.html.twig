@@ -19,16 +19,17 @@
             </tr>
             <tr>
                 <th>Czy można edytować ?</th>
-                <td>{% if dayReport.canEdit %}Yes{% else %}No{% endif %}</td>
+                <td>{% if dayReport.canEdit %}Tak{% else %}Nie{% endif %}</td>
             </tr>
         </tbody>
     </table>
 
-            <a class="btn btn-primary" href="{{ path('dayreport_mysheet') }}">powrót do listy</a>
-            <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">Edycja</a>
-
-                {{ form_start(delete_form) }}
-                    <input class="btn btn-danger" type="submit" value="Kasuj">
-                {{ form_end(delete_form) }}
-
+    <a class="btn btn-primary" href="{{ path('dayreport_mysheet') }}">powrót do listy</a>
+    {% if dayReport.canEdit == 1 %}
+        <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">Edycja</a>
+        <br><br>
+        {{ form_start(delete_form) }}
+            <input class="btn btn-danger" type="submit" value="Kasuj">
+        {{ form_end(delete_form) }}
+    {% endif %}
 {% endblock %}

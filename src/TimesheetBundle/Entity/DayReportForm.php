@@ -42,22 +42,40 @@ class DayReportForm
      */
     private $date;
 
-    private $project_1;
+    private $projectId;
+    
+    private $timeSpent;
 
     /**
      * @return mixed
      */
-    public function getProject1()
+    public function getTimeSpent()
     {
-        return $this->project_1;
+        return $this->timeSpent;
+    }
+
+    /**
+     * @param mixed $timeSpent
+     */
+    public function setTimeSpent($timeSpent)
+    {
+        $this->timeSpent = $timeSpent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProjectId()
+    {
+        return $this->projectId;
     }
 
     /**
      * @param mixed $project_1
      */
-    public function setProject1($project_1)
+    public function setProjectId($projectId)
     {
-        $this->project_1 = $project_1;
+        $this->projectId = $projectId;
     }
 
 

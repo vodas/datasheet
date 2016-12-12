@@ -5,27 +5,25 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Client</th>
-                <th>Actions</th>
+                <th>Nazwa</th>
+                <th>Klient</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for project in projects %}
             <tr>
-                <td><a href="{{ path('projects_show', { 'id': project.id }) }}">{{ project.id }}</a></td>
                 <td>{{ project.name }}</td>
                 <td>{{ project.client }}</td>
                 <td>
-                            <a class="btn btn-primary" href="{{ path('projects_show', { 'id': project.id }) }}">show</a>
-                            <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edit</a>
+                            <a class="btn btn-primary" href="{{ path('projects_show', { 'id': project.id }) }}">szczegóły</a>
+                            <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edycja</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-    <a class="btn btn-success" href="{{ path('projects_new') }}">Create a new project</a>
+    <a class="btn btn-success" href="{{ path('projects_new') }}">nowy projekt</a>
 
 
 {% endblock %}

@@ -1,0 +1,21 @@
+TimesheetBundle\Entity\ProjectReport:
+    type: entity
+    table: null
+    repositoryClass: TimesheetBundle\Repository\ProjectReportRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        timeSpent:
+            type: time
+            column: time_spent
+        projectId:
+            type: integer
+            column: project_id
+        dayReportId:
+            type: integer
+            column: day_report_id
+    lifecycleCallbacks: {  }

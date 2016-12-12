@@ -2,6 +2,19 @@
 {% form_theme edit_form 'bootstrap_3_layout.html.twig' %}
 {% block body %}
     <h1>Edycja raportu z dnia {{ dayReport.date|date('Y-m-d') }}</h1>
+    {% if error is defined %}
+        <div class="alert alert-danger">
+            {% if error == 1 %}
+                <strong>Raport instnieje dla wybranej daty.</strong>
+            {% elseif error == 2 %}
+                <strong>Niepoprawny czas pracy.</strong>
+            {% elseif error == 3 %}
+                <strong>Wybrano sobotę lub niedzielę.</strong>
+            {% elseif error == 4 %}
+                <strong>Wybrano dzień wolny.</strong>
+            {% endif %}
+        </div>
+    {% endif %}
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}

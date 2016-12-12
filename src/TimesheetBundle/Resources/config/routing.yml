@@ -39,6 +39,12 @@ dayreport_employee:
     defaults: { _controller: "TimesheetBundle:DayReport:employee" }
     methods:  GET
 
+dayreport_mass_action:
+    path:     /employee/massaction
+    defaults: { _controller: "TimesheetBundle:DayReport:mass" }
+    methods:  [GET, POST]
+
+
 dayreport_employee_show:
     path:     /employee/{id}/show
     defaults: { _controller: "TimesheetBundle:DayReport:employeeShow" }

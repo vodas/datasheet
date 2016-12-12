@@ -17,47 +17,57 @@
         {% for name,month in dates %}
             <div id="{{ name }}" class="tab-pane fade {% if currentMonth == name %}active in{% endif %}">
                 <h3>{{ name }}</h3>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Start</th>
-                        <th>Koniec</th>
-                        <th>Czas</th>
-                        <th>Komentarz</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for day,values in month %}
-                        <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
-                            style="background-color: #9d9d9d"
-                        {% elseif values.free is defined %}
-                            style="background-color: #9d9d9d"
-                        {% endif %}
-                        >
-                            <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
-                            {% if values.start is defined %}
-                                <td>{% if values.start is defined %}{{ values.start|date('H:i') }}{% endif %}</td>
-                                <td>{% if values.end is defined %}{{ values.end|date('H:i') }}{% endif %}</td>
-                                <td>{{ values.time }}</td>
-                                <td>{% if values.comment is defined %}{{ values.comment }}{% endif %}</td>
-                                <td>
-                                    {% if values.id is defined %}
-                                        <a class="btn btn-primary" href="{{ path('dayreport_employee_show', { 'id': values.id }) }}">Szczegóły</a>
-                                    {% endif %}
-                                </td>
-                            {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
-                                <td colspan="5" style="background-color:#CA002A"><a style="color:white">Dzień nieuzupełniony</a></td>
-                            {% elseif values.free is defined %}
-                                <td colspan="5">Święto</td>
-                            {% elseif values.day == 'Sat' or values.day == 'Sun'%}
-                                <td colspan="5"></td>
-                            {% endif %}
+                <form action="{{ path('dayreport_mass_action') }}" method="post">
+                    <input type="hidden" name="employee_id" value="{{ userid }}">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Start</th>
+                            <th>Koniec</th>
+                            <th>Czas</th>
+                            <th>Komentarz</th>
+                            <th>Czy można edytować ? <input class="btn btn-danger" type="submit" value="Aktualizuj"></th>
+                            <th></th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for day,values in month %}
+                            <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
+                                style="background-color: #9d9d9d"
+                            {% elseif values.free is defined %}
+                                style="background-color: #9d9d9d"
+                            {% endif %}
+                            >
+                                <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
+                                {% if values.start is defined %}
+                                    <td>{% if values.start is defined %}{{ values.start|date('H:i') }}{% endif %}</td>
+                                    <td>{% if values.end is defined %}{{ values.end|date('H:i') }}{% endif %}</td>
+                                    <td>{{ values.time }}</td>
+                                    <td>{% if values.comment is defined %}{{ values.comment }}{% endif %}</td>
+                                    <td>
+                                        <select name="can_edit[{{ values.id }}]">
+                                            <option value="1" {% if values.can_edit == 1 %}selected{% endif %}>Tak</option>
+                                            <option value="0" {% if values.can_edit == 0 %}selected{% endif %}>Nie</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        {% if values.id is defined %}
+                                            <a class="btn btn-primary" href="{{ path('dayreport_employee_show', { 'id': values.id }) }}">Szczegóły</a>
+                                        {% endif %}
+                                    </td>
+                                {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
+                                    <td colspan="6" style="background-color:#CA002A"><a style="color:white">Dzień nieuzupełniony</a></td>
+                                {% elseif values.free is defined %}
+                                    <td colspan="6">Święto</td>
+                                {% elseif values.day == 'Sat' or values.day == 'Sun'%}
+                                    <td colspan="6"></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
             </div>
         {% endfor %}
     </div>
