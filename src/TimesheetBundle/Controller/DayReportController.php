@@ -51,11 +51,34 @@ class DayReportController extends Controller
 
     public function employeeAction($userid) {
         $em = $this->getDoctrine()->getManager();
+        $startDate = new DateTime(self::STARTDATE);
+        $endDate = clone $startDate;
+        $endDate->add(new DateInterval("P1Y"));
+        while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
+            $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
+            if(in_array($startDate->format('m-d'),$this->freeDays)) {
+                $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['free'] = 1;
+            }
+            $startDate->add(new DateInterval("P1D"));
+        }
 
         $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $userid));
+        foreach ($dayReports as $dayReport) {
+            $date = $dayReport->getDate()->format('Y-m-d');
+            $month = $dayReport->getDate()->format('F');
+            $Dates[$month][$date]['start'] = $dayReport->getStart();
+            $Dates[$month][$date]['end'] = $dayReport->getEnd();
+            $Dates[$month][$date]['comment'] = $dayReport->getComment();
+            $Dates[$month][$date]['id'] = $dayReport->getId();
+            $time = new DateTime();
+            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
+            $Dates[$month][$date]['time'] = $time->format('H:i');
 
+        }
+        $currentMonth = date('F');
         return $this->render('dayreport/index.html.twig', array(
-            'dayReports' => $dayReports,
+            'dates' => $Dates,
+            'currentMonth' => $currentMonth,
             'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid))->getUsername()
         ));
     }
@@ -83,11 +106,10 @@ class DayReportController extends Controller
             $Dates[$month][$date]['comment'] = $dayReport->getComment();
             $Dates[$month][$date]['id'] = $dayReport->getId();
             $time = new DateTime();
-            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp()-$dayReport->getStart()->getTimestamp());
+            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
             $Dates[$month][$date]['time'] = $time->format('H:i');
 
         }
-        dump($Dates);
         $currentMonth = date('F');
         return $this->render('dayreport/mysheet.html.twig', array(
             'dates' => $Dates,
@@ -161,6 +183,18 @@ class DayReportController extends Controller
      * Finds and displays a dayReport entity.
      *
      */
+
+    public function employeeShowAction(DayReport $dayReport)
+    {
+        $deleteForm = $this->createDeleteForm($dayReport);
+        return $this->render('dayreport/employee_show.html.twig', array(
+            'dayReport' => $dayReport,
+            'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getId()))->getUsername(),
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+
+
     public function showAction(DayReport $dayReport)
     {
         $deleteForm = $this->createDeleteForm($dayReport);
@@ -209,7 +243,7 @@ class DayReportController extends Controller
             $em->flush($dayReport);
         }
 
-        return $this->redirectToRoute('dayreport_index');
+        return $this->redirectToRoute('dayreport_mysheet');
     }
 
     /**

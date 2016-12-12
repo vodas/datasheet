@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Raport {{ username }} z dnia {{ dayReport.date|date('Y-m-d') }}</h1>
+
+    <table style="width:50%" class="table table-bordered">
+        <tbody>
+        <tr>
+            <th>Godzina rozpoczęcia</th>
+            <td>{% if dayReport.start %}{{ dayReport.start|date('H:i') }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Godzina zakończenia</th>
+            <td>{% if dayReport.end %}{{ dayReport.end|date('H:i') }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Komentarz</th>
+            <td>{{ dayReport.comment }}</td>
+        </tr>
+        <tr>
+            <th>Czy można edytować</th>
+            <td>{% if dayReport.canEdit %}Tak{% else %}Nie{% endif %}</td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="{{ path('dayreport_employee', { 'userid': dayReport.userId }) }}" class="btn btn-primary">Powrót</a>
+
+{% endblock %}

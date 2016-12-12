@@ -1,11 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Dayreports list
-        {% if username is defined %}
-            {{ username }}
-        {% endif %}
-    </h1>
+    <h1>Moje raporty</h1>
     <a class="btn btn-success" href="{{ path('dayreport_new') }}">Stwórz raport</a>
     <ul class="nav nav-tabs">
         {% for name,month in dates %}
@@ -44,8 +40,8 @@
                             <td>{% if values.comment is defined %}{{ values.comment }}{% endif %}</td>
                             <td>
                                 {% if values.id is defined %}
-                                    <a class="btn btn-primary" href="{{ path('dayreport_show', { 'id': values.id }) }}">show</a>
-                                    <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': values.id }) }}">edit</a>
+                                    <a class="btn btn-primary" href="{{ path('dayreport_show', { 'id': values.id }) }}">szczegóły</a>
+                                    <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': values.id }) }}">edytuj</a>
                                 {% endif %}
                             </td>
                             {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
