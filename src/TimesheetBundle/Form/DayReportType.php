@@ -34,13 +34,32 @@ class DayReportType extends AbstractType
             ))
 
 
-            ->add('projectId', ChoiceType::class, array(
+            ->add('projectId1', ChoiceType::class, array(
                 'choices' => $options['projects'],
             ))
 
-        ->add('timeSpent', TimeType::class, array(
-        'widget' => 'choice'
-        ));
+            ->add('timeSpent1', TimeType::class, array(
+            'widget' => 'choice'
+            ))
+
+            ->add('projectId2', ChoiceType::class, array(
+                'choices' => $options['projects'],
+            ))
+
+            ->add('timeSpent2', TimeType::class, array(
+                'widget' => 'choice'
+            ))
+
+            ->add('projectId3', ChoiceType::class, array(
+                'choices' => $options['projects'],
+            ))
+
+            ->add('timeSpent3', TimeType::class, array(
+                'widget' => 'choice'
+            ))
+
+
+        ;
 
     }
     

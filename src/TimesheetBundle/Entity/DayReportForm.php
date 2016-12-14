@@ -42,40 +42,116 @@ class DayReportForm
      */
     private $date;
 
-    private $projectId;
+    private $projectId_1;
     
-    private $timeSpent;
+    private $timeSpent_1;
+
+    private $projectId_2;
+
+    private $timeSpent_2;
+
+    private $projectId_3;
+
+    private $timeSpent_3;
 
     /**
      * @return mixed
      */
-    public function getTimeSpent()
+    public function getProjectId2()
     {
-        return $this->timeSpent;
+        return $this->projectId_2;
+    }
+
+    /**
+     * @param mixed $projectId_2
+     */
+    public function setProjectId2($projectId_2)
+    {
+        $this->projectId_2 = $projectId_2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTimeSpent2()
+    {
+        return $this->timeSpent_2;
+    }
+
+    /**
+     * @param mixed $timeSpent_2
+     */
+    public function setTimeSpent2($timeSpent_2)
+    {
+        $this->timeSpent_2 = $timeSpent_2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProjectId3()
+    {
+        return $this->projectId_3;
+    }
+
+    /**
+     * @param mixed $projectId_3
+     */
+    public function setProjectId3($projectId_3)
+    {
+        $this->projectId_3 = $projectId_3;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTimeSpent3()
+    {
+        return $this->timeSpent_3;
+    }
+
+    /**
+     * @param mixed $timeSpent_3
+     */
+    public function setTimeSpent3($timeSpent_3)
+    {
+        $this->timeSpent_3 = $timeSpent_3;
+    }
+    
+    
+    
+    
+
+    /**
+     * @return mixed
+     */
+    public function getTimeSpent1()
+    {
+        return $this->timeSpent_1;
     }
 
     /**
      * @param mixed $timeSpent
      */
-    public function setTimeSpent($timeSpent)
+    public function setTimeSpent1($timeSpent_1)
     {
-        $this->timeSpent = $timeSpent;
+        $this->timeSpent_1 = $timeSpent_1;
     }
 
     /**
      * @return mixed
      */
-    public function getProjectId()
+    public function getProjectId1()
     {
-        return $this->projectId;
+        return $this->projectId_1;
     }
 
     /**
      * @param mixed $project_1
      */
-    public function setProjectId($projectId)
+    public function setProjectId1($projectId_1)
     {
-        $this->projectId = $projectId;
+        $this->projectId_1 = $projectId_1;
     }
 
 

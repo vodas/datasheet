@@ -131,6 +131,7 @@ class DayReportController extends Controller
         $dayReport = new DayReport();
         $dayReportForm->setDate(new DateTime($date));
         $projects = array();
+        $projects['nie wybrano'] = 0;
         $projectEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findAll();
         foreach($projectEntity as $entity) {
             $projects[$entity->getName()] = $entity->getId();
@@ -187,13 +188,33 @@ class DayReportController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($dayReport);
             $em->flush($dayReport);
-            
-            $projectReport = new ProjectReport();
-            $projectReport->setProjectId($dayReportForm->getProjectId());
-            $projectReport->setTimeSpent($dayReportForm->getTimeSpent());
-            $projectReport->setDayReportId($dayReport->getId());
-            $em->persist($projectReport);
-            $em->flush($projectReport);
+
+            if($dayReportForm->getProjectId1() != 0 && $dayReportForm->getTimeSpent1()->getTimestamp() >= 0) {
+                $projectReport = new ProjectReport();
+                $projectReport->setProjectId($dayReportForm->getProjectId1());
+                $projectReport->setTimeSpent($dayReportForm->getTimeSpent1());
+                $projectReport->setDayReportId($dayReport->getId());
+                $em->persist($projectReport);
+                $em->flush($projectReport);
+            }
+
+            if($dayReportForm->getProjectId2() != 0 && $dayReportForm->getTimeSpent2()->getTimestamp() >= 0) {
+                $projectReport = new ProjectReport();
+                $projectReport->setProjectId($dayReportForm->getProjectId2());
+                $projectReport->setTimeSpent($dayReportForm->getTimeSpent2());
+                $projectReport->setDayReportId($dayReport->getId());
+                $em->persist($projectReport);
+                $em->flush($projectReport);
+            }
+
+            if($dayReportForm->getProjectId3() != 0 && $dayReportForm->getTimeSpent3()->getTimestamp() >= 0) {
+                $projectReport = new ProjectReport();
+                $projectReport->setProjectId($dayReportForm->getProjectId3());
+                $projectReport->setTimeSpent($dayReportForm->getTimeSpent3());
+                $projectReport->setDayReportId($dayReport->getId());
+                $em->persist($projectReport);
+                $em->flush($projectReport);
+            }
             
             
             return $this->redirectToRoute('dayreport_show', array('id' => $dayReport->getId()));
@@ -248,16 +269,28 @@ class DayReportController extends Controller
     {
         $deleteForm = $this->createDeleteForm($dayReport);
         $dayReportForm = new DayReportForm();
-        $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findOneBy(
+        $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
             array('dayReportId' => $dayReport->getId()));
         $dayReportForm->setStart($dayReport->getStart());
         $dayReportForm->setEnd($dayReport->getEnd());
         $dayReportForm->setComment($dayReport->getComment());
         $dayReportForm->setDate($dayReport->getDate());
-        $dayReportForm->setTimeSpent($projectReport->getTimeSpent());
-        $dayReportForm->setProjectId($projectReport->getProjectId());
+        if($projectReport != null) {
+            $i = 1;
+            foreach ($projectReport as $report) {
+                //$dayReportForm->setTimeSpent($report->getTimeSpent());
+                //$dayReportForm->setProjectId($report->getProjectId());
+                $functionName = '';
+                $$functionName = 'setProjectId'.$i;
+                $dayReportForm->${$functionName}($report->getProjectId());
+                $$functionName = 'setTimeSpent'.$i;
+                $dayReportForm->${$functionName}($report->getTimeSpent());
+                $i++;
+            }
+        }
 
         $projects = array();
+        $projects['nie wybrano'] = 0;
         $projectEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findAll();
         foreach($projectEntity as $entity) {
             $projects[$entity->getName()] = $entity->getId();
@@ -280,8 +313,26 @@ class DayReportController extends Controller
             $dayReport->setStart($dayReportForm->getStart());
             $dayReport->setEnd($dayReportForm->getEnd());
             $dayReport->setComment($dayReportForm->getComment());
-            $projectReport->setTimeSpent($dayReportForm->getTimeSpent());
-            $projectReport->setProjectId($dayReportForm->getProjectId());
+
+            $i = 1;
+            foreach ($projectReport as $report) {
+                $functionGetTime = '';
+                $$functionGetTime = 'getTimeSpent'.$i;
+                $functionGetProject = '';
+                $$$functionGetProject = 'getProjectId'.$i;
+
+
+                if ($dayReportForm->${$$functionGetProject}() != 0 && $dayReportForm->${$functionGetTime}()->getTimestamp() >= 0) {
+                    $report->setTimeSpent($dayReportForm->${$functionGetTime}());
+                    $report->setProjectId($dayReportForm->${$$functionGetProject}());
+                }
+                $i ++;
+            }
+           /* dump($projectReport);
+            if ($dayReportForm->getProjectId1() != 0 && $dayReportForm->getTimeSpent1()->getTimestamp() >= 0) {
+                $projectReport->setTimeSpent($dayReportForm->getTimeSpent1());
+                $projectReport->setProjectId($dayReportForm->getProjectId1());
+            }*/
 
 
             

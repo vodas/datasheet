@@ -26,7 +26,7 @@
                 <li><a href="{{ path('dayreport_mysheet') }}">Moje Raporty</a></li>
             {% endif %}
             {% if  app.user %}
-                <p class="navbar-text navbar-right"><a href="{{ app.request.getBaseURL() }}/logout">Logout</a></p>
+                <p class="navbar-text navbar-right"><a href="{{ path('fos_user_security_logout') }}">Logout</a></p>
             {% endif %}
         </ul>
     </div>
