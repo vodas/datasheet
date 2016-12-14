@@ -23,6 +23,20 @@
         </tr>
         </tbody>
     </table>
+
+    <h2>Projekty:</h2>
+    <table style="width:50%" class="table table-bordered">
+        <tbody>
+        {% for report in reports %}
+        <tr>
+            <th>{{ report.projectName }}</th>
+            <th>{{ report.time|date('H:i') }} h</th>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
     <a href="{{ path('dayreport_employee', { 'userid': dayReport.userId }) }}" class="btn btn-primary">Powrót</a>
 
 {% endblock %}

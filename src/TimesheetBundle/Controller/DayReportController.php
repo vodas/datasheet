@@ -212,11 +212,20 @@ class DayReportController extends Controller
 
     public function employeeShowAction(DayReport $dayReport)
     {
+        $reports = array();
+        $projectReports = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
+            array('dayReportId' => $dayReport->getId()));
+        foreach ($projectReports as $projectReport) {
+            $projectName = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findOneBy(array('id' => $projectReport->getProjectId()))->getName();
+            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent()));
+        }
+
         $deleteForm = $this->createDeleteForm($dayReport);
         return $this->render('dayreport/employee_show.html.twig', array(
             'dayReport' => $dayReport,
-            'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getId()))->getUsername(),
+            'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getUserId()))->getUsername(),
             'delete_form' => $deleteForm->createView(),
+            'reports' => $reports
         ));
     }
 

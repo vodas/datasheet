@@ -1,36 +1,54 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Project</h1>
+    <h1>{{ project.name }}</h1>
 
-    <table>
+    <table class="table table-bordered" style="width:30%">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ project.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
+                <th>Nazwa</th>
                 <td>{{ project.name }}</td>
             </tr>
             <tr>
-                <th>Client</th>
+                <th>Klient</th>
                 <td>{{ project.client }}</td>
             </tr>
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('projects_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('projects_edit', { 'id': project.id }) }}">Edit</a>
-        </li>
-        <li>
+    <h2>Czas przeznaczony na projekt:</h2>
+    <table class="table table-bordered" style="width:50%">
+        <thead>
+        <tr>
+            <th>Data</th>
+            <th>Czas(h)</th>
+            <th>Pracownik</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set hours = 0 %}
+        {% for report in timereports %}
+        <tr>
+            <td>{{ report.date|date('Y-m-d') }}</td>
+            <td>{{ report.time|date('H:i') }}</td>
+            <td>{{ report.user }}</td>
+            {% set hours = hours + report.time|date('H:i') %}
+        </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td><b>Suma: {{ hours }}h</b></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+
+            <a class="btn btn-primary" href="{{ path('projects_index') }}">powrót</a>
+            <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edytuj</a>
+            <br><br>
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input class="btn btn-danger" type="submit" value="kasuj">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+
 {% endblock %}

@@ -57,10 +57,22 @@ class ProjectsController extends Controller
     public function showAction(Projects $project)
     {
         $deleteForm = $this->createDeleteForm($project);
+        $timeReports = array();
+        $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
+            array('projectId' => $project->getId()));
+
+
+        foreach ($projectReport as $report) {
+            $dayReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:DayReport')->findOneBy(
+                array('id' => $report->getDayReportId()));
+            $username = $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getUserId()))->getUsername();
+            array_push($timeReports, array('time' => $report->getTimeSpent(),'date' => $dayReport->getDate(), 'user' => $username));
+        }
 
         return $this->render('projects/show.html.twig', array(
             'project' => $project,
             'delete_form' => $deleteForm->createView(),
+            'timereports' => $timeReports
         ));
     }
 
