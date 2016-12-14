@@ -24,6 +24,18 @@
         </tbody>
     </table>
 
+    <h2>Projekty:</h2>
+    <table style="width:50%" class="table table-bordered">
+        <tbody>
+        {% for report in reports %}
+            <tr>
+                <th>{{ report.projectName }}</th>
+                <th>{{ report.time|date('H:i') }} h</th>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
     <a class="btn btn-primary" href="{{ path('dayreport_mysheet') }}">powrót do listy</a>
     {% if dayReport.canEdit == 1 %}
         <a class="btn btn-info" href="{{ path('dayreport_edit', { 'id': dayReport.id }) }}">Edycja</a>

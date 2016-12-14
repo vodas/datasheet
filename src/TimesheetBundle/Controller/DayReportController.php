@@ -253,11 +253,19 @@ class DayReportController extends Controller
 
     public function showAction(DayReport $dayReport)
     {
+        $reports = array();
+        $projectReports = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
+            array('dayReportId' => $dayReport->getId()));
+        foreach ($projectReports as $projectReport) {
+            $projectName = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findOneBy(array('id' => $projectReport->getProjectId()))->getName();
+            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent()));
+        }
         $deleteForm = $this->createDeleteForm($dayReport);
 
         return $this->render('dayreport/show.html.twig', array(
             'dayReport' => $dayReport,
             'delete_form' => $deleteForm->createView(),
+            'reports' => $reports
         ));
     }
 
@@ -359,6 +367,13 @@ class DayReportController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $projectReports = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
+                array('dayReportId' => $dayReport->getId()));
+            foreach ($projectReports as $projectReport) {
+                $em->remove($projectReport);
+                $em->flush($projectReport);
+            }
+
             $em->remove($dayReport);
             $em->flush($dayReport);
         }

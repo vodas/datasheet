@@ -110,6 +110,13 @@ class ProjectsController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+            $projectReports = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
+                array('projectId' => $project->getId()));
+            foreach ($projectReports as $projectReport) {
+                $em->remove($projectReport);
+                $em->flush($projectReport);
+            }
             $em->remove($project);
             $em->flush($project);
         }
