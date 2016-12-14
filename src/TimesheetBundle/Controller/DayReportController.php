@@ -235,10 +235,26 @@ class DayReportController extends Controller
      * Displays a form to edit an existing dayReport entity.
      *
      */
-    public function editAction(Request $request, DayReportForm $dayReport)
+    public function editAction(Request $request, DayReport $dayReport)
     {
         $deleteForm = $this->createDeleteForm($dayReport);
-        $editForm = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReport);
+        $dayReportForm = new DayReportForm();
+        $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findOneBy(
+            array('dayReportId' => $dayReport->getId()));
+        $dayReportForm->setStart($dayReport->getStart());
+        $dayReportForm->setEnd($dayReport->getEnd());
+        $dayReportForm->setComment($dayReport->getComment());
+        $dayReportForm->setDate($dayReport->getDate());
+        $dayReportForm->setTimeSpent($projectReport->getTimeSpent());
+        $dayReportForm->setProjectId($projectReport->getProjectId());
+
+        $projects = array();
+        $projectEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findAll();
+        foreach($projectEntity as $entity) {
+            $projects[$entity->getName()] = $entity->getId();
+        }
+
+        $editForm = $this->createForm('TimesheetBundle\Form\DayReportType', $dayReportForm, array('projects' => $projects));
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -251,7 +267,14 @@ class DayReportController extends Controller
                     'error' => 2
                 ));
             }
-            
+
+            $dayReport->setStart($dayReportForm->getStart());
+            $dayReport->setEnd($dayReportForm->getEnd());
+            $dayReport->setComment($dayReportForm->getComment());
+            $projectReport->setTimeSpent($dayReportForm->getTimeSpent());
+            $projectReport->setProjectId($dayReportForm->getProjectId());
+
+
             
             $this->getDoctrine()->getManager()->flush();
 
