@@ -4,6 +4,8 @@ namespace TimesheetBundle\Controller;
 use TimesheetBundle\Entity\Projects;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use \DateTime;
+use \DateInterval;
 
 /**
  * Project controller.
@@ -11,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProjectsController extends Controller
 {
+
+    const STARTDATE = '2016-01-01';
     /**
      * Lists all project entities.
      *
@@ -56,23 +60,57 @@ class ProjectsController extends Controller
      */
     public function showAction(Projects $project)
     {
+        #dodanie listy swiat ruchomych
+        #wialkanoc
+        $startDate = new DateTime(self::STARTDATE);
+        $easter = date('m-d', easter_date($startDate->format('Y')));
+        #poniedzialek wielkanocny
+        $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
+        #boze cialo
+        $bozeCialo = date('m-d', strtotime('+60 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+        #Zesłanie Ducha Świętego
+        $zeslanie = date('m-d', strtotime('+49 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
+        $this->freeDays = array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie);
+
+
+
         $deleteForm = $this->createDeleteForm($project);
         $timeReports = array();
         $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
             array('projectId' => $project->getId()));
 
-
+        $users = array();
         foreach ($projectReport as $report) {
             $dayReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:DayReport')->findOneBy(
                 array('id' => $report->getDayReportId()));
             $username = $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getUserId()))->getUsername();
-            array_push($timeReports, array('time' => $report->getTimeSpent(),'date' => $dayReport->getDate(), 'user' => $username));
+            if(!array_key_exists($username, $users)) {
+                $users[$username] = $dayReport->getUserId();
+            }
+            array_push($timeReports, array('time' => $report->getTimeSpent(),'date' => $dayReport->getDate(),'comment' => $report->getComment(), 'user' => $username, 'userid' => $dayReport->getUserId()));
         }
+
+        $startDate = new DateTime(self::STARTDATE);
+        $endDate = clone $startDate;
+        $endDate->add(new DateInterval("P1Y"));
+        while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
+            $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
+            if(in_array($startDate->format('m-d'),$this->freeDays)) {
+                $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['free'] = 1;
+            }
+            $startDate->add(new DateInterval("P1D"));
+        }
+
+        foreach ($timeReports as $timeReport) {
+            $Dates[$timeReport['date']->format('F')][$timeReport['date']->format('Y-m-d')]['users'][$timeReport['userid']][$timeReport['comment']] = $timeReport['time'];
+        }
+
 
         return $this->render('projects/show.html.twig', array(
             'project' => $project,
             'delete_form' => $deleteForm->createView(),
-            'timereports' => $timeReports
+            'users' => $users,
+            'dates' => $Dates
         ));
     }
 

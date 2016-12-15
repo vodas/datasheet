@@ -24,6 +24,7 @@
             {% endif %}
             {% if is_granted('ROLE_USER') %}
                 <li><a href="{{ path('dayreport_mysheet') }}">Moje Raporty</a></li>
+                <li><a href="{{ path('leaves') }}">Moje urlopy</a></li>
             {% endif %}
             {% if  app.user %}
                 <p class="navbar-text navbar-right"><a href="{{ path('fos_user_security_logout') }}">Logout</a></p>

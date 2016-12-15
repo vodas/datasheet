@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>
+        {% if username is defined %}
+            {{ username }}
+        {% endif %}
+        - Urlopy
+    </h1>
+
+    <a class="btn btn-success" href="{{ path('leaves_new') }}">zgłoś urlop</a>
+    <table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>Komentarz</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for leave in myleaves %}
+        <tr>
+        <td>{{ leave.date|date('Y-m-d') }}</td>
+        <td>{{ leave.comment }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}

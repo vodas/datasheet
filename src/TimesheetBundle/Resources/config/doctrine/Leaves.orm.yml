@@ -1,0 +1,21 @@
+TimesheetBundle\Entity\Leaves:
+    type: entity
+    table: null
+    repositoryClass: TimesheetBundle\Repository\LeavesRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            column: user_id
+        date:
+            type: date
+        comment:
+            type: string
+            length: 255
+            nullable: true
+    lifecycleCallbacks: {  }

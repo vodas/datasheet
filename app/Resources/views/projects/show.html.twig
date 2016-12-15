@@ -16,39 +16,82 @@
         </tbody>
     </table>
 
-    <h2>Czas przeznaczony na projekt:</h2>
-    <table class="table table-bordered" style="width:50%">
-        <thead>
-        <tr>
-            <th>Data</th>
-            <th>Czas(h)</th>
-            <th>Pracownik</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% set hours = 0 %}
-        {% for report in timereports %}
-        <tr>
-            <td>{{ report.date|date('Y-m-d') }}</td>
-            <td>{{ report.time|date('H:i') }}</td>
-            <td>{{ report.user }}</td>
-            {% set hours = hours + report.time|date('H:i') %}
-        </tr>
+    <h3>Czas pracowników przeznaczony na projekt:</h3>
+
+    <ul class="nav nav-tabs">
+        {% for username,id in users %}
+            <li><a data-toggle="tab" href="#{{ id }}">{{ username }}</a></li>
         {% endfor %}
-        <tr>
-            <td></td>
-            <td><b>Suma: {{ hours }}h</b></td>
-            <td></td>
-        </tr>
-        </tbody>
-    </table>
+    </ul>
+    <div class="tab-content">
+    {% for username,id in users %}
+        <div id="{{ id }}" class="tab-pane fade">
+            <ul class="nav nav-tabs">
+                {% for name,month in dates %}
+                    <li><a data-toggle="tab" href="#{{ name }}{{ id }}">{{ name }}</a></li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content">
+            {% for name,month in dates %}
+                <div id="{{ name }}{{ id }}" class="tab-pane fade">
+                    <h3>{{ name }}</h3>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Dzień</th>
+                            <th>Zadanie/Liczba godzin</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set myhours = 0 %}
+                        {% set weekhours = 0 %}
+                        {% for day,values in month %}
+                            <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
+                                style="background-color: #9d9d9d"
+                            {% elseif values.free is defined %}
+                                style="background-color: #9d9d9d"
+                            {% endif %}
+                            >
+                                <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
+                                {% if values.users is defined and values.users[id] is defined %}
+                                    <td>
+                                    {% for task, hours in values.users[id] %}
+                                        {{ task }} / {{ hours|date('H:i') }} h <br>
+                                        {% set myhours = myhours + hours|date('H:i') %}
+                                        {% set weekhours = weekhours + hours|date('H:i')  %}
+                                    {% endfor %}
+                                    </td>
+                                {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
+                                    <td colspan="5"></td>
+                                {% elseif values.free is defined %}
+                                    <td colspan="5">Święto</td>
+                                {% elseif values.day == 'Sat' or values.day == 'Sun'%}
+                                    <td colspan="5" style="font-weight:bold">
+                                        {% if values.day == 'Sat' %}Przepracowano {{ weekhours }} godzin w tygodniu{% endif %}
+                                        {% set weekhours = 0 %}
+                                    </td>
+
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        <tr><td colspan="1"></td><td style="font-weight:bold">Przepracowano {{ myhours }}  godzin w miesiącu</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 
 
-            <a class="btn btn-primary" href="{{ path('projects_index') }}">powrót</a>
-            <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edytuj</a>
-            <br><br>
-            {{ form_start(delete_form) }}
-                <input class="btn btn-danger" type="submit" value="kasuj">
-            {{ form_end(delete_form) }}
+            <p style="margin-top:50px">
+                <a class="btn btn-primary" href="{{ path('projects_index') }}">powrót</a>
+                <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edytuj</a>
+                <br><br>
+                {{ form_start(delete_form) }}
+                    <input class="btn btn-danger" type="submit" value="kasuj">
+                {{ form_end(delete_form) }}
+            </p>
 
 {% endblock %}
