@@ -26,17 +26,21 @@
                             <th>Start</th>
                             <th>Koniec</th>
                             <th>Czas</th>
-                            <th>Komentarz</th>
                             <th>Czy można edytować ? <input class="btn btn-danger" type="submit" value="Aktualizuj"></th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
+                        {% set workhours = 0 %}
+                        {% set myhours = 0 %}
+                        {% set weekhours = 0 %}
                         {% for day,values in month %}
                             <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
                                 style="background-color: #9d9d9d"
                             {% elseif values.free is defined %}
                                 style="background-color: #9d9d9d"
+                            {% else %}
+                                {% set workhours = workhours + 8 %}
                             {% endif %}
                             >
                                 <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
@@ -44,7 +48,8 @@
                                     <td>{% if values.start is defined %}{{ values.start|date('H:i') }}{% endif %}</td>
                                     <td>{% if values.end is defined %}{{ values.end|date('H:i') }}{% endif %}</td>
                                     <td>{{ values.time }}</td>
-                                    <td>{% if values.comment is defined %}{{ values.comment }}{% endif %}</td>
+                                    {% set myhours = myhours + values.time %}
+                                    {% set weekhours = weekhours + values.time %}
                                     <td>
                                         <select name="can_edit[{{ values.id }}]">
                                             <option value="1" {% if values.can_edit == 1 %}selected{% endif %}>Tak</option>
@@ -57,14 +62,18 @@
                                         {% endif %}
                                     </td>
                                 {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
-                                    <td colspan="6" style="background-color:#CA002A"><a style="color:white">Dzień nieuzupełniony</a></td>
+                                    <td colspan="5" style="background-color:#CA002A"><a style="color:white">Dzień nieuzupełniony</a></td>
                                 {% elseif values.free is defined %}
-                                    <td colspan="6">Święto</td>
+                                    <td colspan="5">Święto</td>
                                 {% elseif values.day == 'Sat' or values.day == 'Sun'%}
-                                    <td colspan="6"></td>
+                                    <td style="font-weight:bold" colspan="5">
+                                        {% if values.day == 'Sat' %}Przepracowano {{ weekhours }} godzin w tygodniu{% endif %}
+                                        {% set weekhours = 0 %}
+                                    </td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
+                        <tr><td colspan="1"></td><td style="font-weight:bold">Przepracowano {{ myhours }} z {{ workhours }} godzin w miesiącu</td></tr>
                         </tbody>
                     </table>
                 </form>

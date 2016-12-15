@@ -46,13 +46,70 @@ class DayReportForm
     
     private $timeSpent_1;
 
+    private $comment_1;
+
     private $projectId_2;
 
     private $timeSpent_2;
 
+    private $comment_2;
+
     private $projectId_3;
 
     private $timeSpent_3;
+
+    private $comment_3;
+
+    /**
+     * @return mixed
+     */
+    public function getComment1()
+    {
+        return $this->comment_1;
+    }
+
+    /**
+     * @param mixed $comment_1
+     */
+    public function setComment1($comment_1)
+    {
+        $this->comment_1 = $comment_1;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComment2()
+    {
+        return $this->comment_2;
+    }
+
+    /**
+     * @param mixed $comment_2
+     */
+    public function setComment2($comment_2)
+    {
+        $this->comment_2 = $comment_2;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComment3()
+    {
+        return $this->comment_3;
+    }
+
+    /**
+     * @param mixed $comment_3
+     */
+    public function setComment3($comment_3)
+    {
+        $this->comment_3 = $comment_3;
+    }
+
+    
+
 
     /**
      * @return mixed

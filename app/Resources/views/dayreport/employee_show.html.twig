@@ -14,10 +14,6 @@
             <td>{% if dayReport.end %}{{ dayReport.end|date('H:i') }}{% endif %}</td>
         </tr>
         <tr>
-            <th>Komentarz</th>
-            <td>{{ dayReport.comment }}</td>
-        </tr>
-        <tr>
             <th>Czy można edytować</th>
             <td>{% if dayReport.canEdit %}Tak{% else %}Nie{% endif %}</td>
         </tr>
@@ -31,6 +27,7 @@
         <tr>
             <th>{{ report.projectName }}</th>
             <th>{{ report.time|date('H:i') }} h</th>
+            <th>{{ report.comment }}</th>
         </tr>
         {% endfor %}
         </tbody>

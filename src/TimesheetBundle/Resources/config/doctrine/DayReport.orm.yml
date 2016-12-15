@@ -16,8 +16,6 @@ TimesheetBundle\Entity\DayReport:
         userId:
             type: integer
             column: user_id
-        comment:
-            type: text
         canEdit:
             type: boolean
             column: can_edit

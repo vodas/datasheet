@@ -69,7 +69,6 @@ class DayReportController extends Controller
             $month = $dayReport->getDate()->format('F');
             $Dates[$month][$date]['start'] = $dayReport->getStart();
             $Dates[$month][$date]['end'] = $dayReport->getEnd();
-            $Dates[$month][$date]['comment'] = $dayReport->getComment();
             $Dates[$month][$date]['id'] = $dayReport->getId();
             $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
             $time = new DateTime();
@@ -106,7 +105,6 @@ class DayReportController extends Controller
             $month = $dayReport->getDate()->format('F');
             $Dates[$month][$date]['start'] = $dayReport->getStart();
             $Dates[$month][$date]['end'] = $dayReport->getEnd();
-            $Dates[$month][$date]['comment'] = $dayReport->getComment();
             $Dates[$month][$date]['id'] = $dayReport->getId();
             $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
             $time = new DateTime();
@@ -155,7 +153,6 @@ class DayReportController extends Controller
 
             $dayReport->setStart($dayReportForm->getStart());
             $dayReport->setEnd($dayReportForm->getEnd());
-            $dayReport->setComment($dayReportForm->getComment());
             $dayReport->setDate($dayReportForm->getDate());
 
 
@@ -194,6 +191,7 @@ class DayReportController extends Controller
                 $projectReport->setProjectId($dayReportForm->getProjectId1());
                 $projectReport->setTimeSpent($dayReportForm->getTimeSpent1());
                 $projectReport->setDayReportId($dayReport->getId());
+                $projectReport->setComment($dayReportForm->getComment1());
                 $em->persist($projectReport);
                 $em->flush($projectReport);
             }
@@ -203,6 +201,7 @@ class DayReportController extends Controller
                 $projectReport->setProjectId($dayReportForm->getProjectId2());
                 $projectReport->setTimeSpent($dayReportForm->getTimeSpent2());
                 $projectReport->setDayReportId($dayReport->getId());
+                $projectReport->setComment($dayReportForm->getComment2());
                 $em->persist($projectReport);
                 $em->flush($projectReport);
             }
@@ -212,6 +211,7 @@ class DayReportController extends Controller
                 $projectReport->setProjectId($dayReportForm->getProjectId3());
                 $projectReport->setTimeSpent($dayReportForm->getTimeSpent3());
                 $projectReport->setDayReportId($dayReport->getId());
+                $projectReport->setComment($dayReportForm->getComment3());
                 $em->persist($projectReport);
                 $em->flush($projectReport);
             }
@@ -238,7 +238,7 @@ class DayReportController extends Controller
             array('dayReportId' => $dayReport->getId()));
         foreach ($projectReports as $projectReport) {
             $projectName = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findOneBy(array('id' => $projectReport->getProjectId()))->getName();
-            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent()));
+            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent(), 'comment' => $projectReport->getComment()));
         }
 
         $deleteForm = $this->createDeleteForm($dayReport);
@@ -258,7 +258,7 @@ class DayReportController extends Controller
             array('dayReportId' => $dayReport->getId()));
         foreach ($projectReports as $projectReport) {
             $projectName = $this->getDoctrine()->getRepository('TimesheetBundle:Projects')->findOneBy(array('id' => $projectReport->getProjectId()))->getName();
-            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent()));
+            array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent(), 'comment' => $projectReport->getComment()));
         }
         $deleteForm = $this->createDeleteForm($dayReport);
 
@@ -281,7 +281,6 @@ class DayReportController extends Controller
             array('dayReportId' => $dayReport->getId()));
         $dayReportForm->setStart($dayReport->getStart());
         $dayReportForm->setEnd($dayReport->getEnd());
-        $dayReportForm->setComment($dayReport->getComment());
         $dayReportForm->setDate($dayReport->getDate());
         if($projectReport != null) {
             $i = 1;
@@ -293,6 +292,8 @@ class DayReportController extends Controller
                 $dayReportForm->${$functionName}($report->getProjectId());
                 $$functionName = 'setTimeSpent'.$i;
                 $dayReportForm->${$functionName}($report->getTimeSpent());
+                $$functionName = 'setComment'.$i;
+                $dayReportForm->${$functionName}($report->getComment());
                 $i++;
             }
         }
@@ -320,7 +321,6 @@ class DayReportController extends Controller
 
             $dayReport->setStart($dayReportForm->getStart());
             $dayReport->setEnd($dayReportForm->getEnd());
-            $dayReport->setComment($dayReportForm->getComment());
 
             $i = 1;
             foreach ($projectReport as $report) {
@@ -328,15 +328,18 @@ class DayReportController extends Controller
                 $$functionGetTime = 'getTimeSpent'.$i;
                 $functionGetProject = '';
                 $$$functionGetProject = 'getProjectId'.$i;
+                $functionGetComment = '';
+                $$$$functionGetComment = 'getComment'.$i;
 
 
                 if ($dayReportForm->${$$functionGetProject}() != 0 && $dayReportForm->${$functionGetTime}()->getTimestamp() >= 0) {
                     $report->setTimeSpent($dayReportForm->${$functionGetTime}());
                     $report->setProjectId($dayReportForm->${$$functionGetProject}());
+                    $report->setComment($dayReportForm->${$$$functionGetComment}());
                 }
                 $i ++;
             }
-           /* dump($projectReport);
+           /*
             if ($dayReportForm->getProjectId1() != 0 && $dayReportForm->getTimeSpent1()->getTimestamp() >= 0) {
                 $projectReport->setTimeSpent($dayReportForm->getTimeSpent1());
                 $projectReport->setProjectId($dayReportForm->getProjectId1());

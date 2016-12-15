@@ -18,4 +18,6 @@ TimesheetBundle\Entity\ProjectReport:
         dayReportId:
             type: integer
             column: day_report_id
+        comment:
+            type: text
     lifecycleCallbacks: {  }

@@ -24,10 +24,7 @@ class DayReportType extends AbstractType
             ->add('end', TimeType::class, array(
                 'widget' => 'choice'
             ))
-            ->add('comment', TextareaType::class, array(
-                'attr' => array('class' => 'tinymce'),
-            ))
-            
+
 
             ->add('date', DateType::class, array(
                 'widget' => 'choice',
@@ -42,6 +39,10 @@ class DayReportType extends AbstractType
             'widget' => 'choice'
             ))
 
+            ->add('comment1', TextareaType::class, array(
+                'attr' => array('class' => 'tinymce'),
+            ))
+
             ->add('projectId2', ChoiceType::class, array(
                 'choices' => $options['projects'],
             ))
@@ -50,12 +51,20 @@ class DayReportType extends AbstractType
                 'widget' => 'choice'
             ))
 
+            ->add('comment2', TextareaType::class, array(
+                'attr' => array('class' => 'tinymce'),
+            ))
+
             ->add('projectId3', ChoiceType::class, array(
                 'choices' => $options['projects'],
             ))
 
             ->add('timeSpent3', TimeType::class, array(
                 'widget' => 'choice'
+            ))
+
+            ->add('comment3', TextareaType::class, array(
+                'attr' => array('class' => 'tinymce'),
             ))
 
 
