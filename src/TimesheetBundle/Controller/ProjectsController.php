@@ -24,9 +24,16 @@ class ProjectsController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $projects = $em->getRepository('TimesheetBundle:Projects')->findAll();
-
+        $clients = $em->getRepository('TimesheetBundle:Clients')->findAll();
+        
+        $clientNames = array();
+        foreach ($clients as $client) {
+            $clientNames[$client->getId()] = $client->getName();
+        }
+        
         return $this->render('projects/index.html.twig', array(
             'projects' => $projects,
+            'clientNames' => $clientNames
         ));
     }
 
@@ -37,7 +44,14 @@ class ProjectsController extends Controller
     public function newAction(Request $request)
     {
         $project = new Projects();
-        $form = $this->createForm('TimesheetBundle\Form\ProjectsType', $project);
+
+        $clients = array();
+        $clientsEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Clients')->findAll();
+        foreach($clientsEntity as $entity) {
+            $clients[$entity->getName()] = $entity->getId();
+        }
+
+        $form = $this->createForm('TimesheetBundle\Form\ProjectsType', $project, array('clients' => $clients));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -104,13 +118,13 @@ class ProjectsController extends Controller
         foreach ($timeReports as $timeReport) {
             $Dates[$timeReport['date']->format('F')][$timeReport['date']->format('Y-m-d')]['users'][$timeReport['userid']][$timeReport['comment']] = $timeReport['time'];
         }
-
-
+        $client = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:Clients')->findOneBy(array('id' => $project->getClientId()))->getName();
         return $this->render('projects/show.html.twig', array(
             'project' => $project,
             'delete_form' => $deleteForm->createView(),
             'users' => $users,
-            'dates' => $Dates
+            'dates' => $Dates,
+            'client' => $client
         ));
     }
 
@@ -121,7 +135,12 @@ class ProjectsController extends Controller
     public function editAction(Request $request, Projects $project)
     {
         $deleteForm = $this->createDeleteForm($project);
-        $editForm = $this->createForm('TimesheetBundle\Form\ProjectsType', $project);
+        $clients = array();
+        $clientsEntity = $this->getDoctrine()->getRepository('TimesheetBundle:Clients')->findAll();
+        foreach($clientsEntity as $entity) {
+            $clients[$entity->getName()] = $entity->getId();
+        }
+        $editForm = $this->createForm('TimesheetBundle\Form\ProjectsType', $project,array('clients' => $clients));
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

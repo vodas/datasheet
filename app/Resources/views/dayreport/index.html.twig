@@ -38,7 +38,11 @@
                             <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
                                 style="background-color: #9d9d9d"
                             {% elseif values.free is defined %}
-                                style="background-color: #9d9d9d"
+                                {% if values.free == 1 %}
+                                    style="background-color: #9d9d9d"
+                                {% else %}
+                                    style="background-color: #7EC0EE"
+                                {% endif %}
                             {% else %}
                                 {% set workhours = workhours + 8 %}
                             {% endif %}
@@ -64,7 +68,11 @@
                                 {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
                                     <td colspan="5" style="background-color:#CA002A"><a style="color:white">Dzień nieuzupełniony</a></td>
                                 {% elseif values.free is defined %}
-                                    <td colspan="5">Święto</td>
+                                    {% if values.free == 1 %}
+                                        <td colspan="5">Święto</td>
+                                    {% else %}
+                                        <td colspan="5"><strong>Urlop</strong></td>
+                                    {% endif %}
                                 {% elseif values.day == 'Sat' or values.day == 'Sun'%}
                                     <td style="font-weight:bold" colspan="5">
                                         {% if values.day == 'Sat' %}Przepracowano {{ weekhours }} godzin w tygodniu{% endif %}

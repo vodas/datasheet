@@ -5,6 +5,7 @@ namespace TimesheetBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ProjectsType extends AbstractType
 {
@@ -13,7 +14,12 @@ class ProjectsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name')->add('client')        ;
+        $builder->add('name')
+
+            ->add('clientId', ChoiceType::class, array(
+                'choices' => $options['clients'],
+            ))
+        ;
     }
     
     /**
@@ -22,7 +28,8 @@ class ProjectsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'TimesheetBundle\Entity\Projects'
+            'data_class' => 'TimesheetBundle\Entity\Projects',
+            'clients' => array(),
         ));
     }
 

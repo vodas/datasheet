@@ -4,6 +4,16 @@ projects_index:
     defaults: { _controller: "TimesheetBundle:Projects:index" }
     methods:  GET
 
+clients_index:
+    path:     /clients/
+    defaults: { _controller: "TimesheetBundle:Clients:index" }
+    methods:  GET
+
+clients_new:
+    path:     /clients/new
+    defaults: {_controller: "TimesheetBundle:Clients:new"}
+    methods:  [GET, POST]
+
 leaves:
     path:     /leaves/
     defaults: { _controller: "TimesheetBundle:Leaves:myLeaves" }

@@ -76,6 +76,14 @@ class DayReportController extends Controller
             $Dates[$month][$date]['time'] = $time->format('H:i');
 
         }
+
+        $leaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('userId' => $userid));
+        foreach ($leaves as $leave) {
+            $date = $leave->getDate()->format('Y-m-d');
+            $month = $leave->getDate()->format('F');
+            $Dates[$month][$date]['free'] = 'leave';
+        }
+
         $currentMonth = date('F');
         return $this->render('dayreport/index.html.twig', array(
             'dates' => $Dates,
@@ -110,7 +118,12 @@ class DayReportController extends Controller
             $time = new DateTime();
             date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
             $Dates[$month][$date]['time'] = $time->format('H:i');
-
+        }
+        $leaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('userId' => $user->getId()));
+        foreach ($leaves as $leave) {
+            $date = $leave->getDate()->format('Y-m-d');
+            $month = $leave->getDate()->format('F');
+            $Dates[$month][$date]['free'] = 'leave';
         }
         $currentMonth = date('F');
         return $this->render('dayreport/mysheet.html.twig', array(

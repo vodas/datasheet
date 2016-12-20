@@ -3,9 +3,9 @@
 namespace TimesheetBundle\Entity;
 
 /**
- * Projects
+ * Clients
  */
-class Projects
+class Clients
 {
     /**
      * @var int
@@ -20,7 +20,7 @@ class Projects
     /**
      * @var string
      */
-    private $clientId;
+    private $email;
 
 
     /**
@@ -38,7 +38,7 @@ class Projects
      *
      * @param string $name
      *
-     * @return Projects
+     * @return Clients
      */
     public function setName($name)
     {
@@ -58,27 +58,27 @@ class Projects
     }
 
     /**
-     * Set client
+     * Set email
      *
-     * @param string $client
+     * @param string $email
      *
-     * @return Projects
+     * @return Clients
      */
-    public function setClientId($clientId)
+    public function setEmail($email)
     {
-        $this->clientId = $clientId;
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get client
+     * Get email
      *
      * @return string
      */
-    public function getClientId()
+    public function getEmail()
     {
-        return $this->clientId;
+        return $this->email;
     }
 }
 

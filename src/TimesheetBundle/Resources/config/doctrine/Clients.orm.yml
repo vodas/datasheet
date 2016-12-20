@@ -1,7 +1,7 @@
-TimesheetBundle\Entity\Projects:
+TimesheetBundle\Entity\Clients:
     type: entity
     table: null
-    repositoryClass: TimesheetBundle\Repository\ProjectsRepository
+    repositoryClass: TimesheetBundle\Repository\ClientsRepository
     id:
         id:
             type: integer
@@ -12,8 +12,7 @@ TimesheetBundle\Entity\Projects:
         name:
             type: string
             length: 255
-        clientId:
+        email:
             type: string
             length: 255
-            nullable: true
     lifecycleCallbacks: {  }

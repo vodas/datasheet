@@ -21,6 +21,7 @@
                     </ul>
                 </li>
                 <li><a href="{{ path('projects_index') }}">Projekty</a></li>
+                <li><a href="{{ path('clients_index') }}">Klienci</a></li>
             {% endif %}
             {% if is_granted('ROLE_USER') %}
                 <li><a href="{{ path('dayreport_mysheet') }}">Moje Raporty</a></li>

@@ -8,6 +8,18 @@
         - Urlopy
     </h1>
 
+    {% if error is defined and error != '' %}
+        <div class="alert alert-danger">
+            {% if error == 1 %}
+                <strong>Istnieje już urlop dla wybranej daty.</strong>
+            {% elseif error == 2 %}
+                <strong>Istnieje raport dla wybranej daty.</strong>
+            {% elseif error == 3 %}
+                <strong>Wybrano sobotę lub niedzielę.</strong>
+            {% endif %}
+        </div>
+    {% endif %}
+
     <a class="btn btn-success" href="{{ path('leaves_new') }}">zgłoś urlop</a>
     <table class="table table-striped">
     <thead>
@@ -26,4 +38,5 @@
     {% endfor %}
     </tbody>
     </table>
+    <p>Wykorzystano <strong>{{ mysummary }}</strong> z <strong>{{ summary }}</strong> dni w roku.</p>
 {% endblock %}

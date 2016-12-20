@@ -36,7 +36,7 @@ class DayReportType extends AbstractType
             ))
 
             ->add('timeSpent1', TimeType::class, array(
-            'widget' => 'choice'
+                'widget' => 'choice'
             ))
 
             ->add('comment1', TextareaType::class, array(
@@ -71,7 +71,7 @@ class DayReportType extends AbstractType
         ;
 
     }
-    
+
     /**
      * {@inheritdoc}
      */

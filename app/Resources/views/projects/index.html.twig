@@ -14,7 +14,7 @@
         {% for project in projects %}
             <tr>
                 <td>{{ project.name }}</td>
-                <td>{{ project.client }}</td>
+                <td>{{ clientNames[project.clientId] }}</td>
                 <td>
                             <a class="btn btn-primary" href="{{ path('projects_show', { 'id': project.id }) }}">szczegóły</a>
                             <a class="btn btn-info" href="{{ path('projects_edit', { 'id': project.id }) }}">edycja</a>

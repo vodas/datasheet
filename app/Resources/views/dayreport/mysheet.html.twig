@@ -31,7 +31,11 @@
                         <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
                             style="background-color: #9d9d9d"
                         {% elseif values.free is defined %}
-                            style="background-color: #9d9d9d"
+                            {% if values.free == 1 %}
+                                style="background-color: #9d9d9d"
+                            {% else %}
+                                style="background-color: #7EC0EE"
+                            {% endif %}
                         {% else %}
                             {% set workhours = workhours + 8 %}
                         {% endif %}
@@ -54,7 +58,11 @@
                             {% elseif values.day != 'Sat' and values.day != 'Sun' and values.free is not defined%}
                                 <td colspan="5"><a class="btn btn-danger" href="{{ path('dayreport_new_date',{'date' : day}) }}">Uzupełnij</a></td>
                             {% elseif values.free is defined %}
-                                <td colspan="5">Święto</td>
+                                {% if values.free == 1 %}
+                                    <td colspan="5">Święto</td>
+                                 {% else %}
+                                     <td colspan="5"><strong>Urlop</strong></td>
+                                 {% endif %}
                             {% elseif values.day == 'Sat' or values.day == 'Sun'%}
                                 <td colspan="5" style="font-weight:bold">
                                     {% if values.day == 'Sat' %}Przepracowano {{ weekhours }} godzin w tygodniu{% endif %}
@@ -64,7 +72,7 @@
                             {% endif %}
                         </tr>
                     {% endfor %}
-                    <tr><td colspan="1"></td><td style="font-weight:bold">Przepracowano {{ myhours }} z {{ workhours }} godzin w miesiącu</td></tr>
+                    <tr><td colspan="1"></td><td style="calcfont-weight:bold">Przepracowano {{ myhours }} z {{ workhours }} godzin w miesiącu</td></tr>
                     </tbody>
                 </table>
             </div>
