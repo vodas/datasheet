@@ -192,6 +192,30 @@ class DayReportController extends Controller
                    'error' => 4
                ));
            }
+            
+            if($dayReportForm->getProjectId1() != 0 && $dayReportForm->getComment1() == '') {
+                return $this->render('dayreport/new.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'form' => $form->createView(),
+                    'error' => 5
+                ));
+            }
+
+            if($dayReportForm->getProjectId2() != 0 && $dayReportForm->getComment2() == '') {
+                return $this->render('dayreport/new.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'form' => $form->createView(),
+                    'error' => 5
+                ));
+            }
+
+            if($dayReportForm->getProjectId3() != 0 && $dayReportForm->getComment3() == '') {
+                return $this->render('dayreport/new.html.twig', array(
+                    'dayReport' => $dayReport,
+                    'form' => $form->createView(),
+                    'error' => 5
+                ));
+            }
 
             $dayReport->setUserId($userId);
             $dayReport->setCanEdit(1);
