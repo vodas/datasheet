@@ -86,9 +86,7 @@ class ClientsController extends Controller {
         }
 
         $month = date('F');
-
-        dump($Dates);
-
+        
         return $this->render('clients/show.html.twig', array(
             'client' => $clients,
             'projects' => $projects,

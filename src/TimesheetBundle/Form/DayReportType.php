@@ -41,6 +41,7 @@ class DayReportType extends AbstractType
 
             ->add('comment1', TextareaType::class, array(
                 'attr' => array('class' => 'tinymce'),
+                'required' => false
             ))
 
             ->add('projectId2', ChoiceType::class, array(
@@ -53,6 +54,7 @@ class DayReportType extends AbstractType
 
             ->add('comment2', TextareaType::class, array(
                 'attr' => array('class' => 'tinymce'),
+                'required' => false
             ))
 
             ->add('projectId3', ChoiceType::class, array(
@@ -65,6 +67,7 @@ class DayReportType extends AbstractType
 
             ->add('comment3', TextareaType::class, array(
                 'attr' => array('class' => 'tinymce'),
+                'required' => false
             ))
 
 
