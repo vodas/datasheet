@@ -9,6 +9,18 @@ clients_index:
     defaults: { _controller: "TimesheetBundle:Clients:index" }
     methods:  GET
 
+config_index:
+    path:     /config/
+    defaults: { _controller: "TimesheetBundle:AdminConfig:index" }
+    methods:  GET
+
+config_edit:
+    path:     /config/edit
+    defaults: { _controller: "TimesheetBundle:AdminConfig:edit" }
+    methods:  [GET, POST]
+
+
+
 clients_new:
     path:     /clients/new
     defaults: {_controller: "TimesheetBundle:Clients:new"}
@@ -61,9 +73,9 @@ dayreport_show:
     methods:  GET
 
 dayreport_employee:
-    path:     /employee/{userid}
+    path:     /employee/{userid}/{year}
     defaults: { _controller: "TimesheetBundle:DayReport:employee" }
-    methods:  GET
+    methods:  [GET, POST]
 
 leaves_employee:
     path:     /employee/leaves/{userid}

@@ -16,18 +16,15 @@ use TimesheetBundle\Entity\ProjectReport;
  */
 class DayReportController extends Controller
 {
-    const STARTDATE = '2016-01-01';
     /**
      * Lists all dayReport entities.
      *
      */
-    public $freeDays;
 
-    function __construct() {
-        if($this->freeDays === null) {
+    function freeDays($start) {
             #dodanie listy swiat ruchomych
             #wialkanoc
-            $startDate = new DateTime(self::STARTDATE);
+            $startDate = new DateTime($start);
             $easter = date('m-d', easter_date($startDate->format('Y')));
             #poniedzialek wielkanocny
             $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
@@ -35,8 +32,7 @@ class DayReportController extends Controller
             $bozeCialo = date('m-d', strtotime('+60 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
             #Zesłanie Ducha Świętego
             $zeslanie = date('m-d', strtotime('+49 days', strtotime( $startDate->format('Y') . '-' . $easter) ));
-            $this->freeDays = array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie);
-        }
+            return array('01-01', '01-06', '05-01', '05-03', '08-15', '11-01', '11-11', '12-25', '12-26', $easter, $easterSec, $bozeCialo, $zeslanie);
     }
 
     public function indexAction()
@@ -50,14 +46,21 @@ class DayReportController extends Controller
         ));
     }
 
-    public function employeeAction($userid) {
+    public function employeeAction(Request $request, $userid, $year) {
+
+        if($year == '') {
+            $year = date('Y');
+        }
+        $start = $year.'-01-01';
+
+
         $em = $this->getDoctrine()->getManager();
-        $startDate = new DateTime(self::STARTDATE);
+        $startDate = new DateTime($start);
         $endDate = clone $startDate;
         $endDate->add(new DateInterval("P1Y"));
         while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
             $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
-            if(in_array($startDate->format('m-d'),$this->freeDays)) {
+            if(in_array($startDate->format('m-d'),$this->freeDays($start))) {
                 $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['free'] = 1;
             }
             $startDate->add(new DateInterval("P1D"));
@@ -65,19 +68,29 @@ class DayReportController extends Controller
 
         $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $userid));
         foreach ($dayReports as $dayReport) {
-            $date = $dayReport->getDate()->format('Y-m-d');
-            $month = $dayReport->getDate()->format('F');
-            $Dates[$month][$date]['start'] = $dayReport->getStart();
-            $Dates[$month][$date]['end'] = $dayReport->getEnd();
-            $Dates[$month][$date]['id'] = $dayReport->getId();
-            $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
-            $time = new DateTime();
-            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
-            $Dates[$month][$date]['time'] = $time->format('H:i');
-
+            if ($dayReport->getDate()->format('Y') == $year) {
+                $date = $dayReport->getDate()->format('Y-m-d');
+                $month = $dayReport->getDate()->format('F');
+                $Dates[$month][$date]['start'] = $dayReport->getStart();
+                $Dates[$month][$date]['end'] = $dayReport->getEnd();
+                $Dates[$month][$date]['id'] = $dayReport->getId();
+                $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
+                $time = new DateTime();
+                date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() - 60 * 60);
+                $Dates[$month][$date]['time'] = $time->format('H:i');
+            }
         }
 
         $leaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('userId' => $userid));
+
+        $currentYear = (int)date('Y');
+        $years = array();
+        $startYear=2016;
+        while($startYear<= $currentYear) {
+            array_push($years, $startYear);
+            $startYear++;
+        }
+        
         foreach ($leaves as $leave) {
             $date = $leave->getDate()->format('Y-m-d');
             $month = $leave->getDate()->format('F');
@@ -88,20 +101,24 @@ class DayReportController extends Controller
         return $this->render('dayreport/index.html.twig', array(
             'dates' => $Dates,
             'currentMonth' => $currentMonth,
+            'years' => $years,
             'userid' => $userid,
             'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid))->getUsername()
         ));
     }
 
     public function mysheetAction() {
+
+        $start = '2016-01-01';
+
         $em = $this->getDoctrine()->getManager();
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $startDate = new DateTime(self::STARTDATE);
+        $startDate = new DateTime($start);
         $endDate = clone $startDate;
         $endDate->add(new DateInterval("P1Y"));
         while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
             $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['day'] = $startDate->format('D');
-            if(in_array($startDate->format('m-d'),$this->freeDays)) {
+            if(in_array($startDate->format('m-d'),$this->freeDays($start))) {
                 $Dates[$startDate->format('F')][$startDate->format('Y-m-d')]['free'] = 1;
             }
             $startDate->add(new DateInterval("P1D"));
@@ -138,6 +155,8 @@ class DayReportController extends Controller
      */
     public function newAction(Request $request, $date)
     {
+        $start = '2016-01-01';
+
         $dayReportForm = new DayReportForm();
         $dayReport = new DayReport();
         $dayReportForm->setDate(new DateTime($date));
@@ -185,7 +204,7 @@ class DayReportController extends Controller
                 ));
             }
 
-           if(in_array($dayReport->getDate()->format('m-d'),$this->freeDays)) {
+           if(in_array($dayReport->getDate()->format('m-d'),$this->freeDays($start))) {
                return $this->render('dayreport/new.html.twig', array(
                    'dayReport' => $dayReport,
                    'form' => $form->createView(),

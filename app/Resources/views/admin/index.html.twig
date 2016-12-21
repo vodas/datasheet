@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Konfiguracja</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Parametr</th>
+            <th>Wartość</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set startyear = null %}
+        {% for config in adminconfig %}
+            <tr>
+                <td>{{ config.parameter }}</td>
+                {% if config.parameter == 'start_year' %}
+                    {% set startyear = config.value %}
+                {% endif %}
+                <td>{{ config.value }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p>Zmień bieżący rok:</p>
+    <form action="{{ path('config_edit') }}" method="post">
+        <select name="current_year">
+            <option value="{{ startyear }}" selected>{{ startyear }}</option>
+            {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Edytuj">
+    </form>
+{% endblock %}

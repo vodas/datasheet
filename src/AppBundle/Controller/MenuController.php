@@ -9,9 +9,8 @@ class MenuController extends Controller
     {
         $userManager = $this->get('fos_user.user_manager');
         $users = $userManager->findUsers();
+        $year = date('Y');
 
-
-        return $this->render('menu.html.twig', array( 'users' => $users
-        ));
+        return $this->render('menu.html.twig', array( 'users' => $users, 'year' => $year));
     }
 }

@@ -1,0 +1,18 @@
+TimesheetBundle\Entity\AdminConfig:
+    type: entity
+    table: null
+    repositoryClass: TimesheetBundle\Repository\AdminConfigRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        parameter:
+            type: string
+            length: 255
+        value:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }
