@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{{  client.name }}</h1>
+    <h4>{{ client.email }}</h4>
+    <h4>Projekty:</h4>
+    <ul>
+    {% for project in projects %}
+       <li><a href="{{ path('projects_show', {'id' : project.id}) }}">{{ project.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <h4>Podsumowanie:</h4>
+    <ul class="nav nav-tabs">
+        {% for name,month in dates %}
+            <li{% if currentMonth == name %} class="active"{% endif %}><a data-toggle="tab" href="#{{ name }}">{{ name }}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
+        {% for name,month in dates %}
+            <div id="{{ name }}" class="tab-pane fade {% if currentMonth == name %}active in{% endif %}">
+                <h3>{{ name }}</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Developer / Projekt / Zadanie / liczba godzin</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set workhours = 0 %}
+                    {% set weekhours = 0 %}
+                    {% for day,values in month %}
+                        <tr {% if values.day == 'Sat' or values.day == 'Sun' %}
+                            style="background-color: #9d9d9d"
+                            {% endif %}
+                        >
+                            <td>{% if day %}{{ day|date('Y-m-d') }}{% endif %}</td>
+                            {% if values.reports is defined %}
+                                <td colspan="4">
+                                    {% for report in values.reports %}
+                                        {{ report.user }} / {{ report.project }} / {{ report.report.comment }} / {{ report.report.timeSpent|date('H:i')  }} <br>
+                                        {% set weekhours = weekhours + report.report.timeSpent|date('H:i')  %}
+                                        {% set workhours = workhours + report.report.timeSpent|date('H:i')  %}
+                                    {% endfor %}
+                                </td>
+                            {% elseif values.day == 'Sat' or values.day == 'Sun'%}
+                                <td colspan="5" style="font-weight:bold">
+                                    {% if values.day == 'Sat' %}Przepracowano {{ weekhours }} godzin w tygodniu{% endif %}
+                                    {% set weekhours = 0 %}
+                                </td>
+
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr><td colspan="1"></td><td style="font-weight:bold">Przepracowano {{ workhours }}  godzin w miesiącu</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

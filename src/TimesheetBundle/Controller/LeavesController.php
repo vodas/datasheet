@@ -66,6 +66,17 @@ class LeavesController extends Controller
             'form' => $form->createView(),
         ));
     }
+
+    function employeeAction($userid) {
+
+        $user = $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid));
+        $em = $this->getDoctrine()->getManager();
+        $leaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('userId' => $user->getId()));
+        return $this->render('leaves/employee.html.twig', array(
+            'username' => $user->getUsername(),
+            'leaves' => $leaves
+        ));
+    }
     
     function deleteAction() {
     }

@@ -14,6 +14,12 @@ clients_new:
     defaults: {_controller: "TimesheetBundle:Clients:new"}
     methods:  [GET, POST]
 
+clients_show:
+    path:     /clients/{id}/show
+    defaults: { _controller: "TimesheetBundle:Clients:show" }
+    methods:  GET
+
+
 leaves:
     path:     /leaves/
     defaults: { _controller: "TimesheetBundle:Leaves:myLeaves" }
@@ -57,6 +63,11 @@ dayreport_show:
 dayreport_employee:
     path:     /employee/{userid}
     defaults: { _controller: "TimesheetBundle:DayReport:employee" }
+    methods:  GET
+
+leaves_employee:
+    path:     /employee/leaves/{userid}
+    defaults: { _controller: "TimesheetBundle:Leaves:employee" }
     methods:  GET
 
 dayreport_mass_action:

@@ -35,3 +35,8 @@ security:
             - { path: ^/register, role: ROLE_ADMIN }
             - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/admin/, role: ROLE_ADMIN }
+            - { path: ^/clients/, role: ROLE_ADMIN }
+            - { path: ^/projects/, role: ROLE_ADMIN }
+            - { path: ^/employee/, role: ROLE_ADMIN }
+            - { path: ^/mysheet/, role: ROLE_USER }
+            - { path: ^/leaves/, role: ROLE_USER }
