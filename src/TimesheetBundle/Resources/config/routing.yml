@@ -19,7 +19,15 @@ config_edit:
     defaults: { _controller: "TimesheetBundle:AdminConfig:edit" }
     methods:  [GET, POST]
 
+dayreport_redirect:
+    path:     /dayreport/
+    defaults: { _controller: "TimesheetBundle:DayReport:redirect" }
+    methods:  [GET, POST]
 
+mysheet_redirect:
+    path:     /sheetredirect/
+    defaults: { _controller: "TimesheetBundle:DayReport:mySheetRedirect" }
+    methods:  [GET, POST]
 
 clients_new:
     path:     /clients/new
@@ -78,7 +86,7 @@ dayreport_employee:
     methods:  [GET, POST]
 
 leaves_employee:
-    path:     /employee/leaves/{userid}
+    path:     /leaves/{userid}
     defaults: { _controller: "TimesheetBundle:Leaves:employee" }
     methods:  GET
 
@@ -89,12 +97,12 @@ dayreport_mass_action:
 
 
 dayreport_employee_show:
-    path:     /employee/{id}/show
+    path:     /employee/{id}/show/
     defaults: { _controller: "TimesheetBundle:DayReport:employeeShow" }
     methods:  GET
 
 dayreport_mysheet:
-    path:     /mysheet/
+    path:     /mysheet/{year}
     defaults: { _controller: "TimesheetBundle:DayReport:mysheet" }
     methods:  GET
 

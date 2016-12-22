@@ -7,13 +7,14 @@
         {% endif %}
         - Raporty
     </h1>
-    <form action="{{ path('dayreport_employee',{'userid': userid, 'year' : 2016}) }}" method="post">
-        <select name="current_year">
+    <form action="{{ path('dayreport_redirect')}}" method="post">
+        <input type="hidden" name="userid" value="{{ userid }}">
+        <select name="year">
             {% for year in years %}
-                <option value="{{ year }}">{{ year }}</option>
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
             {% endfor %}
         </select>
-        <input type="submit" class="btn btn-primary" value="Edytuj">
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
     </form>
     <ul class="nav nav-tabs">
         {% for name,month in dates %}

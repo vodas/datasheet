@@ -35,7 +35,7 @@
                 <li><a href="{{ path('config_index') }}">Konfiguracja</a></li>
             {% endif %}
             {% if is_granted('ROLE_USER') %}
-                <li><a href="{{ path('dayreport_mysheet') }}">Moje Raporty</a></li>
+                <li><a href="{{ path('dayreport_mysheet', {'year': year}) }}">Moje Raporty</a></li>
                 <li><a href="{{ path('leaves') }}">Moje urlopy</a></li>
             {% endif %}
             {% if  app.user %}

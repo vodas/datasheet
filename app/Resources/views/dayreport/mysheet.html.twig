@@ -2,6 +2,14 @@
 
 {% block body %}
     <h1>Moje raporty</h1>
+    <form action="{{ path('mysheet_redirect') }}" method="post">
+        <select name="year">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
+    </form>
     <a class="btn btn-success" href="{{ path('dayreport_new') }}">Stwórz raport</a>
     <ul class="nav nav-tabs">
         {% for name,month in dates %}
@@ -71,6 +79,7 @@
 
                             {% endif %}
                         </tr>
+
                     {% endfor %}
                     <tr><td colspan="1"></td><td style="calcfont-weight:bold">Przepracowano {{ myhours }} z {{ workhours }} godzin w miesiącu</td></tr>
                     </tbody>

@@ -46,6 +46,21 @@ class DayReportController extends Controller
         ));
     }
 
+    public function redirectAction(Request $request)
+    {
+
+        return $this->redirectToRoute('dayreport_employee', array(
+            'userid' =>  $request->request->get('userid'),
+            'year' => $request->request->get('year'))
+        );
+    }
+
+    public function mySheetRedirectAction(Request $request) {
+        return $this->redirectToRoute('dayreport_mysheet', array(
+                'year' => $request->request->get('year'))
+        );
+    }
+
     public function employeeAction(Request $request, $userid, $year) {
 
         if($year == '') {
@@ -92,24 +107,30 @@ class DayReportController extends Controller
         }
         
         foreach ($leaves as $leave) {
-            $date = $leave->getDate()->format('Y-m-d');
-            $month = $leave->getDate()->format('F');
-            $Dates[$month][$date]['free'] = 'leave';
+            if($leave->getDate()->format('Y') == $year) {
+                $date = $leave->getDate()->format('Y-m-d');
+                $month = $leave->getDate()->format('F');
+                $Dates[$month][$date]['free'] = 'leave';
+            }
         }
 
         $currentMonth = date('F');
         return $this->render('dayreport/index.html.twig', array(
             'dates' => $Dates,
             'currentMonth' => $currentMonth,
+            'currentYear' => $currentYear,
             'years' => $years,
             'userid' => $userid,
             'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $userid))->getUsername()
         ));
     }
 
-    public function mysheetAction() {
+    public function mysheetAction($year) {
 
-        $start = '2016-01-01';
+        if($year == '') {
+            $year = date('Y');
+        }
+        $start = $year.'-01-01';
 
         $em = $this->getDoctrine()->getManager();
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
@@ -126,26 +147,42 @@ class DayReportController extends Controller
 
         $dayReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('userId' => $user->getId()));
         foreach ($dayReports as $dayReport) {
-            $date = $dayReport->getDate()->format('Y-m-d');
-            $month = $dayReport->getDate()->format('F');
-            $Dates[$month][$date]['start'] = $dayReport->getStart();
-            $Dates[$month][$date]['end'] = $dayReport->getEnd();
-            $Dates[$month][$date]['id'] = $dayReport->getId();
-            $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
-            $time = new DateTime();
-            date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() -60*60);
-            $Dates[$month][$date]['time'] = $time->format('H:i');
+            if ($dayReport->getDate()->format('Y') == $year) {
+                $date = $dayReport->getDate()->format('Y-m-d');
+                $month = $dayReport->getDate()->format('F');
+                $Dates[$month][$date]['start'] = $dayReport->getStart();
+                $Dates[$month][$date]['end'] = $dayReport->getEnd();
+                $Dates[$month][$date]['id'] = $dayReport->getId();
+                $Dates[$month][$date]['can_edit'] = $dayReport->getCanEdit();
+                $time = new DateTime();
+                date_timestamp_set($time, $dayReport->getEnd()->getTimestamp() - $dayReport->getStart()->getTimestamp() - 60 * 60);
+                $Dates[$month][$date]['time'] = $time->format('H:i');
+            }
         }
         $leaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('userId' => $user->getId()));
         foreach ($leaves as $leave) {
-            $date = $leave->getDate()->format('Y-m-d');
-            $month = $leave->getDate()->format('F');
-            $Dates[$month][$date]['free'] = 'leave';
+            if($leave->getDate()->format('Y') == $year) {
+                $date = $leave->getDate()->format('Y-m-d');
+                $month = $leave->getDate()->format('F');
+                $Dates[$month][$date]['free'] = 'leave';
+            }
+
         }
+
+        $currentYear = (int)date('Y');
+        $years = array();
+        $startYear=2015;
+        while($startYear<= $currentYear) {
+            array_push($years, $startYear);
+            $startYear++;
+        }
+
         $currentMonth = date('F');
         return $this->render('dayreport/mysheet.html.twig', array(
             'dates' => $Dates,
-            'currentMonth' => $currentMonth
+            'currentMonth' => $currentMonth,
+            'currentYear' => $currentYear,
+            'years' => $years
         ));
     }
 
@@ -156,7 +193,7 @@ class DayReportController extends Controller
     public function newAction(Request $request, $date)
     {
         $start = '2016-01-01';
-
+        $year = date('Y');
         $dayReportForm = new DayReportForm();
         $dayReport = new DayReport();
         $dayReportForm->setDate(new DateTime($date));
@@ -192,7 +229,8 @@ class DayReportController extends Controller
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
-                    'error' => 2
+                    'error' => 2,
+                    'year' => $year
                 ));
             }
             
@@ -200,7 +238,8 @@ class DayReportController extends Controller
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
-                    'error' => 3
+                    'error' => 3,
+                    'year' => $year
                 ));
             }
 
@@ -208,7 +247,8 @@ class DayReportController extends Controller
                return $this->render('dayreport/new.html.twig', array(
                    'dayReport' => $dayReport,
                    'form' => $form->createView(),
-                   'error' => 4
+                   'error' => 4,
+                   'year' => $year
                ));
            }
             
@@ -216,7 +256,8 @@ class DayReportController extends Controller
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
-                    'error' => 5
+                    'error' => 5,
+                    'year' => $year
                 ));
             }
 
@@ -224,7 +265,8 @@ class DayReportController extends Controller
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
-                    'error' => 5
+                    'error' => 5,
+                    'year' => $year
                 ));
             }
 
@@ -232,7 +274,8 @@ class DayReportController extends Controller
                 return $this->render('dayreport/new.html.twig', array(
                     'dayReport' => $dayReport,
                     'form' => $form->createView(),
-                    'error' => 5
+                    'error' => 5,
+                    'year' => $year
                 ));
             }
 
@@ -279,6 +322,7 @@ class DayReportController extends Controller
         return $this->render('dayreport/new.html.twig', array(
             'dayReport' => $dayReport,
             'form' => $form->createView(),
+            'year' => $year
         ));
     }
 
@@ -298,11 +342,13 @@ class DayReportController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($dayReport);
+        $year = date('Y');
         return $this->render('dayreport/employee_show.html.twig', array(
             'dayReport' => $dayReport,
             'username' => $this->get('fos_user.user_manager')->findUserBy(array('id' => $dayReport->getUserId()))->getUsername(),
             'delete_form' => $deleteForm->createView(),
-            'reports' => $reports
+            'reports' => $reports,
+            'year' => $year
         ));
     }
 
@@ -317,11 +363,13 @@ class DayReportController extends Controller
             array_push($reports, array('projectName' => $projectName, 'time' => $projectReport->getTimeSpent(), 'comment' => $projectReport->getComment()));
         }
         $deleteForm = $this->createDeleteForm($dayReport);
+        $year = date('Y');
 
         return $this->render('dayreport/show.html.twig', array(
             'dayReport' => $dayReport,
             'delete_form' => $deleteForm->createView(),
-            'reports' => $reports
+            'reports' => $reports,
+            'year' => $year
         ));
     }
 
@@ -331,6 +379,7 @@ class DayReportController extends Controller
      */
     public function editAction(Request $request, DayReport $dayReport)
     {
+        $year = date('Y');
         $deleteForm = $this->createDeleteForm($dayReport);
         $dayReportForm = new DayReportForm();
         $projectReport = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:ProjectReport')->findBy(
@@ -353,6 +402,10 @@ class DayReportController extends Controller
                 $i++;
             }
         }
+        $numberOfprojectReports = 0;
+        if (isset($i)) {
+            $numberOfprojectReports = $i-1;
+        }
 
         $projects = array();
         $projects['nie wybrano'] = 0;
@@ -371,7 +424,8 @@ class DayReportController extends Controller
                     'dayReport' => $dayReport,
                     'edit_form' => $editForm->createView(),
                     'delete_form' => $deleteForm->createView(),
-                    'error' => 2
+                    'error' => 2,
+                    'year' =>$year
                 ));
             }
 
@@ -395,6 +449,44 @@ class DayReportController extends Controller
                 }
                 $i ++;
             }
+
+            if ($numberOfprojectReports < 3) {
+                $em = $this->getDoctrine()->getManager();
+                if($dayReportForm->getTimeSpent3()->getTimestamp() >= 0 && $dayReportForm->getProjectId3() != 0) {
+                    $report = new ProjectReport();
+                    $report->setTimeSpent($dayReportForm->getTimeSpent3());
+                    $report->setComment($dayReportForm->getComment3());
+                    $report->setDayReportId($dayReport->getId());
+                    $report->setProjectId($dayReportForm->getProjectId3());
+                    $em->persist($report);
+                    $em->flush($report);
+                }
+                if($numberOfprojectReports < 2) {
+                    if($dayReportForm->getTimeSpent2()->getTimestamp() >= 0 && $dayReportForm->getProjectId2() != 0) {
+                        $report = new ProjectReport();
+                        $report->setTimeSpent($dayReportForm->getTimeSpent2());
+                        $report->setComment($dayReportForm->getComment2());
+                        $report->setDayReportId($dayReport->getId());
+                        $report->setProjectId($dayReportForm->getProjectId2());
+                        $em->persist($report);
+                        $em->flush($report);
+                    }
+                }
+                if($numberOfprojectReports == 0) {
+                    if($dayReportForm->getTimeSpent1()->getTimestamp() >= 0 && $dayReportForm->getProjectId1() != 0) {
+                        $report = new ProjectReport();
+                        $report->setTimeSpent($dayReportForm->getTimeSpent1());
+                        $report->setComment($dayReportForm->getComment1());
+                        $report->setDayReportId($dayReport->getId());
+                        $report->setProjectId($dayReportForm->getProjectId1());
+                        $em->persist($report);
+                        $em->flush($report);
+                    }
+                }
+
+            }
+
+
            /*
             if ($dayReportForm->getProjectId1() != 0 && $dayReportForm->getTimeSpent1()->getTimestamp() >= 0) {
                 $projectReport->setTimeSpent($dayReportForm->getTimeSpent1());
@@ -412,6 +504,7 @@ class DayReportController extends Controller
             'dayReport' => $dayReport,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
+            'year' => $year,
         ));
     }
 
@@ -469,7 +562,8 @@ class DayReportController extends Controller
 
             }
         }
-        return $this->redirectToRoute('dayreport_employee', array('userid' => $userId));
+        $year = date('Y');
+        return $this->redirectToRoute('dayreport_employee', array('userid' => $userId, 'year' => $year));
 
     }
 }
