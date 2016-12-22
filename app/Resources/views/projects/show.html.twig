@@ -17,6 +17,15 @@
     </table>
 
     <h3>Czas pracowników przeznaczony na projekt:</h3>
+    <form action="{{ path('projects_redirect')}}" method="post">
+        <input type="hidden" name="projectid" value="{{ project.id }}">
+        <select name="year">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
+    </form>
 
     <ul class="nav nav-tabs">
         {% for username,id in users %}

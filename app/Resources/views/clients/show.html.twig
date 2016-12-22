@@ -6,7 +6,7 @@
     <h4>Projekty:</h4>
     <ul>
     {% for project in projects %}
-       <li><a href="{{ path('projects_show', {'id' : project.id}) }}">{{ project.name }}</a></li>
+       <li><a href="{{ path('projects_show', {'id' : project.id, 'year': year}) }}">{{ project.name }}</a></li>
     {% endfor %}
     </ul>
     <h4>Podsumowanie:</h4>

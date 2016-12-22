@@ -14,7 +14,6 @@ use \DateInterval;
 class ProjectsController extends Controller
 {
 
-    const STARTDATE = '2016-01-01';
     /**
      * Lists all project entities.
      *
@@ -33,8 +32,16 @@ class ProjectsController extends Controller
         
         return $this->render('projects/index.html.twig', array(
             'projects' => $projects,
-            'clientNames' => $clientNames
+            'clientNames' => $clientNames,
+            'year' => date('Y')
         ));
+    }
+
+    public function projectsRedirectAction(Request $request) {
+        return $this->redirectToRoute('projects_show', array(
+                'year' => $request->request->get('year'),
+                'id' => $request->request->get('projectid'))
+        );
     }
 
     /**
@@ -72,11 +79,12 @@ class ProjectsController extends Controller
      * Finds and displays a project entity.
      *
      */
-    public function showAction(Projects $project)
+    public function showAction(Projects $project, $year)
     {
         #dodanie listy swiat ruchomych
         #wialkanoc
-        $startDate = new DateTime(self::STARTDATE);
+        $start = $year.'-01-01';
+        $startDate = new DateTime($start);
         $easter = date('m-d', easter_date($startDate->format('Y')));
         #poniedzialek wielkanocny
         $easterSec = date('m-d', strtotime('+1 day', strtotime( $startDate->format('Y') . '-' . $easter) ));
@@ -104,7 +112,7 @@ class ProjectsController extends Controller
             array_push($timeReports, array('time' => $report->getTimeSpent(),'date' => $dayReport->getDate(),'comment' => $report->getComment(), 'user' => $username, 'userid' => $dayReport->getUserId()));
         }
 
-        $startDate = new DateTime(self::STARTDATE);
+        $startDate = new DateTime($start);
         $endDate = clone $startDate;
         $endDate->add(new DateInterval("P1Y"));
         while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
@@ -116,15 +124,28 @@ class ProjectsController extends Controller
         }
 
         foreach ($timeReports as $timeReport) {
-            $Dates[$timeReport['date']->format('F')][$timeReport['date']->format('Y-m-d')]['users'][$timeReport['userid']][$timeReport['comment']] = $timeReport['time'];
+            if($timeReport['date']->format('Y') == $year) {
+                $Dates[$timeReport['date']->format('F')][$timeReport['date']->format('Y-m-d')]['users'][$timeReport['userid']][$timeReport['comment']] = $timeReport['time'];
+            }
         }
+
+        $currentYear = (int)date('Y');
+        $years = array();
+        $startYear=2016;
+        while($startYear<= $currentYear) {
+            array_push($years, $startYear);
+            $startYear++;
+        }
+
         $client = $this->getDoctrine()->getManager()->getRepository('TimesheetBundle:Clients')->findOneBy(array('id' => $project->getClientId()))->getName();
         return $this->render('projects/show.html.twig', array(
             'project' => $project,
             'delete_form' => $deleteForm->createView(),
             'users' => $users,
             'dates' => $Dates,
-            'client' => $client
+            'client' => $client,
+            'years' => $years,
+            'currentYear' => $currentYear
         ));
     }
 

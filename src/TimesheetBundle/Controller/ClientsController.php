@@ -91,7 +91,8 @@ class ClientsController extends Controller {
             'client' => $clients,
             'projects' => $projects,
             'dates' => $Dates,
-            'currentMonth' => $month
+            'currentMonth' => $month,
+            'year' => date('Y')
         ));
     }
 }

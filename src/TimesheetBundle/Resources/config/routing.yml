@@ -60,13 +60,18 @@ leaves_new:
     methods:  [GET, POST]
 
 projects_show:
-    path:     /projects/{id}/show
+    path:     /projects/{id}/show/{year}
     defaults: { _controller: "TimesheetBundle:Projects:show" }
     methods:  GET
 
 projects_new:
     path:     /projects/new
     defaults: { _controller: "TimesheetBundle:Projects:new" }
+    methods:  [GET, POST]
+
+projects_redirect:
+    path:     /projectsredirect/
+    defaults: { _controller: "TimesheetBundle:Projects:projectsRedirect" }
     methods:  [GET, POST]
 
 projects_edit:
