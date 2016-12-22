@@ -39,14 +39,23 @@ clients_show:
     defaults: { _controller: "TimesheetBundle:Clients:show" }
     methods:  GET
 
+leaves_redirect:
+    path:     /leavesredirect/
+    defaults: { _controller: "TimesheetBundle:Leaves:redirect" }
+    methods:  [GET, POST]
+
+employee_leaves_redirect:
+    path:     /employeeleavesredirect/
+    defaults: { _controller: "TimesheetBundle:Leaves:employeeRedirect" }
+    methods:  [GET, POST]
 
 leaves:
-    path:     /leaves/
+    path:     /leaves/{year}/
     defaults: { _controller: "TimesheetBundle:Leaves:myLeaves" }
     methods:  [GET, POST]
 
 leaves_new:
-    path:     /leaves/new
+    path:     /leaves-new/
     defaults: {_controller: "TimesheetBundle:Leaves:new"}
     methods:  [GET, POST]
 
@@ -86,7 +95,7 @@ dayreport_employee:
     methods:  [GET, POST]
 
 leaves_employee:
-    path:     /leaves/{userid}
+    path:     /employeeleaves/{userid}/{year}
     defaults: { _controller: "TimesheetBundle:Leaves:employee" }
     methods:  GET
 

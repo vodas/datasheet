@@ -5,8 +5,16 @@
         {% if username is defined %}
             {{ username }}
         {% endif %}
-        - Urlopy
+        - Urlopy {{ year }}
     </h1>
+    <form action="{{ path('leaves_redirect')}}" method="post">
+        <select name="year">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
+    </form>
 
     {% if error is defined and error != '' %}
         <div class="alert alert-danger">

@@ -1,8 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<h1>Urlopy pracownika {{ username }}</h1>
-
+<h1>Urlopy pracownika {{ username }} {{ year }}</h1>
+    <form action="{{ path('employee_leaves_redirect')}}" method="post">
+        <input type="hidden" name="userid" value="{{ userid }}">
+        <select name="year">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
+    </form>
     <table class="table table-striped">
         <thead>
         <tr>
