@@ -530,7 +530,7 @@ class DayReportController extends Controller
             $em->flush($dayReport);
         }
 
-        return $this->redirectToRoute('dayreport_mysheet');
+        return $this->redirectToRoute('dayreport_mysheet', array('year' => date('Y')));
     }
 
     /**

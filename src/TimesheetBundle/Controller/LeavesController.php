@@ -74,22 +74,22 @@ class LeavesController extends Controller
             $myLeaves = $em->getRepository('TimesheetBundle:Leaves')->findBy(array('date' => $leave->getDate(),'userId' => $user->getId()));
             if ($myLeaves != null) {
                 $error = 1;
-                return $this->redirectToRoute('leaves', array('error' => $error));
+                return $this->redirectToRoute('leaves', array('error' => $error, 'year' => date('Y')));
             }
             $myReports = $em->getRepository('TimesheetBundle:DayReport')->findBy(array('date' => $leave->getDate(),'userId' => $user->getId()));
             if ($myReports != null) {
                 $error = 2;
-                return $this->redirectToRoute('leaves', array('error' => $error));
+                return $this->redirectToRoute('leaves', array('error' => $error, 'year' => date('Y')));
             }
             if($leave->getDate()->format('D') == 'Sun' || $leave->getDate()->format('D') == 'Sat') {
                 $error = 3;
-                return $this->redirectToRoute('leaves', array('error' => $error));
+                return $this->redirectToRoute('leaves', array('error' => $error, 'year' => date('Y')));
             }
 
             $leave->setUserId($user->getId());
             $em->persist($leave);
             $em->flush($leave);
-            return $this->redirectToRoute('leaves', array());
+            return $this->redirectToRoute('leaves', array('year' => date('Y')));
         }
         return $this->render('leaves/new.html.twig', array(
             'leaves' => $leave,
