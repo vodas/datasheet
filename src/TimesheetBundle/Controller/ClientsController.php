@@ -22,9 +22,17 @@ class ClientsController extends Controller {
 
         return $this->render('clients/index.html.twig', array(
             'clients' => $clients,
-            'projects' => $projects
+            'projects' => $projects,
+            'year' => date('Y')
         ));
 
+    }
+
+    public function clientsRedirectAction(Request $request) {
+        return $this->redirectToRoute('clients_show', array(
+                'year' => $request->request->get('year'),
+                'id' => $request->request->get('clientid'))
+        );
     }
 
     public function newAction(Request $request)
@@ -50,8 +58,9 @@ class ClientsController extends Controller {
     /**
      * @return mixed
      */
-    public function showAction(Clients $clients) {
+    public function showAction(Clients $clients, $year) {
 
+        
         $em = $this->getDoctrine()->getManager();
         $projects = $em->getRepository('TimesheetBundle:Projects')->findBy(array('clientId' => $clients->getId()));
 
@@ -70,7 +79,7 @@ class ClientsController extends Controller {
         }
 
 
-        $startDate = new DateTime(date("Y")."-01-01");
+        $startDate = new DateTime($year."-01-01");
         $endDate = clone $startDate;
         $endDate->add(new DateInterval("P1Y"));
         while ($startDate->getTimestamp() < $endDate->getTimestamp()) {
@@ -80,19 +89,31 @@ class ClientsController extends Controller {
 
         foreach ($projectReports as $projectReport) {
             $dayReport = $em->getRepository('TimesheetBundle:DayReport')->find($projectReport->getDayReportId());
-            $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['report'] = $projectReport;
-            $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['user'] = $usersArray[$dayReport->getUserId()];
-            $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['project'] = $em->getRepository('TimesheetBundle:Projects')->find($projectReport->getProjectId())->getName();
+            if($dayReport->getDate()->format('Y') == $year) {
+                $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['report'] = $projectReport;
+                $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['user'] = $usersArray[$dayReport->getUserId()];
+                $Dates[$dayReport->getDate()->format('F')][$dayReport->getDate()->format('Y-m-d')]['reports'][$projectReport->getId()]['project'] = $em->getRepository('TimesheetBundle:Projects')->find($projectReport->getProjectId())->getName();
+            }
         }
 
         $month = date('F');
+
+        $currentYear = (int)date('Y');
+        $years = array();
+        $startYear=2015;
+        while($startYear<= $currentYear) {
+            array_push($years, $startYear);
+            $startYear++;
+        }
         
         return $this->render('clients/show.html.twig', array(
             'client' => $clients,
             'projects' => $projects,
             'dates' => $Dates,
             'currentMonth' => $month,
-            'year' => date('Y')
+            'year' => date('Y'),
+            'years' => $years,
+            'currentYear' => $currentYear
         ));
     }
 }

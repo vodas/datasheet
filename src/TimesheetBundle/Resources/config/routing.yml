@@ -35,7 +35,7 @@ clients_new:
     methods:  [GET, POST]
 
 clients_show:
-    path:     /clients/{id}/show
+    path:     /clients/{id}/show/{year}
     defaults: { _controller: "TimesheetBundle:Clients:show" }
     methods:  GET
 
@@ -72,6 +72,11 @@ projects_new:
 projects_redirect:
     path:     /projectsredirect/
     defaults: { _controller: "TimesheetBundle:Projects:projectsRedirect" }
+    methods:  [GET, POST]
+
+clients_redirect:
+    path:     /clientsredirect/
+    defaults: { _controller: "TimesheetBundle:Clients:clientsRedirect" }
     methods:  [GET, POST]
 
 projects_edit:

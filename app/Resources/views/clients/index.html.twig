@@ -17,7 +17,7 @@
                 <td>{{ client.email }}</td>
                 <td>{{ projects[client.id] }}</td>
                 <td>
-                    <a class="btn btn-primary" href="{{ path('clients_show', { 'id': client.id }) }}">szczegóły</a>
+                    <a class="btn btn-primary" href="{{ path('clients_show', { 'id': client.id, 'year': year }) }}">szczegóły</a>
                 </td>
             </tr>
         {% endfor %}

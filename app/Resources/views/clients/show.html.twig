@@ -10,6 +10,17 @@
     {% endfor %}
     </ul>
     <h4>Podsumowanie:</h4>
+
+    <form action="{{ path('clients_redirect')}}" method="post">
+        <input type="hidden" name="clientid" value="{{ client.id }}">
+        <select name="year">
+            {% for year in years %}
+                <option value="{{ year }}" {% if year == currentYear %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" class="btn btn-primary" value="Wybierz rok">
+    </form>
+
     <ul class="nav nav-tabs">
         {% for name,month in dates %}
             <li{% if currentMonth == name %} class="active"{% endif %}><a data-toggle="tab" href="#{{ name }}">{{ name }}</a></li>
